@@ -2,9 +2,9 @@ source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.2.2", ">= 7.2.2.1"
-gem 'devise'        # 認証
-gem 'geocoder'      # 位置情報
-gem 'dotenv-rails'  # 環境変数管理（APIキー用）
+gem "devise"        # 認証
+gem "geocoder"      # 位置情報
+gem "dotenv-rails"  # 環境変数管理（APIキー用）
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 # Use sqlite3 as the database for Active Record
