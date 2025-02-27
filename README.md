@@ -23,7 +23,7 @@ Many features described in this README are still under development and have not 
 ## 🛠 Installation (WIP)
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/bar-explorer.git
+git clone https://github.com/X0377/Bar-Atlas.git
 cd bar-explorer
 
 # Install dependencies
