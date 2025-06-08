@@ -12,6 +12,7 @@ gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
 gem "tailwindcss-rails"
+gem "sassc-rails"  # SCSS compiler
 
 # Application features
 gem "ransack"       # Search functionality

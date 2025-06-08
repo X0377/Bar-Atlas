@@ -5,6 +5,8 @@ class BarsController < ApplicationController
   def index
     @q = Bar.ransack(params[:q])
     @bars = @q.result.includes(:specialties)
+
+    @bars = @bars.limit(12) if params[:q].blank?
   end
 
   # GET /bars/1

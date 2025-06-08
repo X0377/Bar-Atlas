@@ -1,29 +1,42 @@
-<% content_for :title, "Bars" %>
-
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
-
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Bars</h1>
-    <%= link_to "New bar", new_bar_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
-  </div>
-
-  <div id="bars" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @bars.any? %>
-      <% @bars.each do |bar| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render bar %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", bar, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_bar_path(bar), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", bar, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
-          </div>
+<div class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-title">
+      <span class="accent-gold">酔い</span>の<span class="accent-wine">地図帳</span>
+    </h1>
+    <p class="hero-subtitle">
+      今日はどこで酔う？
+    </p>
+    <%= search_form_for @q, local: true, class: "search-form" do |f| %>
+      <div class="search-container">
+        <div class="search-input-wrapper">
+          <%= f.search_field :name_or_address_cont,
+              placeholder: "バー名・エリアで検索...",
+              class: "search-input" %>
         </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No bars found.</p>
+        <div class="search-button-wrapper">
+          <%= f.submit "検索", class: "search-button" %>
+        </div>
+      </div>
+      <div class="quick-filters">
+        <%= link_to "🥃 ウイスキー", bars_path(q: { specialties_category_cont: "ウイスキー" }),
+            class: "filter-button" %>
+        <%= link_to "🍸 カクテル", bars_path(q: { specialties_category_cont: "カクテル" }),
+            class: "filter-button" %>
+        <%= link_to "🍾 シャンパン", bars_path(q: { specialties_category_cont: "シャンパン" }),
+            class: "filter-button" %>
+        <%= link_to "🍷 ワイン", bars_path(q: { specialties_category_cont: "ワイン" }),
+            class: "filter-button" %>
+      </div>
     <% end %>
+    <div class="scroll-indicator">
+      <svg class="scroll-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+      </svg>
+    </div>
+  </div>
+</div>
+<div class="results-section">
+  <div class="results-container">
+    <!-- バー表示など今後記述 -->
   </div>
 </div>
