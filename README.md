@@ -1,4 +1,4 @@
-# 🍸 Bar‑Atlas
+# 🍸 Bar‑Atlas 「酔いの地図帳」
 
 ## 🔍 Overview
 
@@ -30,11 +30,11 @@ The MVP is intentionally small. After the initial review cycle we plan to iterat
 - 📱 Responsive UI polish
 - 💬 Basic reviews / comments
 
-\-----------|-------|-----|
-\| **v0.2** | 🔍 Keyword & area search (Ransack)<br>🎨 Tailwind UI card polish | 2025‑06‑15 |
-\| **v0.3** | 👤 User authentication (Devise)<br>⭐ Favorite bars | 2025‑06‑22 |
-\| **v0.4** | 🗺 Google Maps marker display<br>⚡ N+1 query optimisation | 2025‑06‑29 |
-\| **v1.0** | 📱 Responsive design fine‑tune<br>🔄 CI/CD auto‑deploy to Render<br>💬 Simple review/comments | 2025‑07‑06 |
+\-----------|-------|
+\| **v0.2** | 🔍 Keyword & area search (Ransack)<br>🎨 Tailwind UI card polish |
+\| **v0.3** | 👤 User authentication (Devise)<br>⭐ Favorite bars |
+\| **v0.4** | 🗺 Google Maps marker display<br>⚡ N+1 query optimisation |
+\| **v1.0** | 📱 Responsive design fine‑tune<br>🔄 CI/CD auto‑deploy to Render<br>💬 Simple review/comments |
 
 ---
 
