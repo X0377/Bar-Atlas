@@ -83,4 +83,4 @@ $ bin/rails s            # http://localhost:3000
 
 ## 🎠 License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT](LICENSE).
