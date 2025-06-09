@@ -1,0 +1,33 @@
+.app-header {
+  background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
+  height: var(--header-height);
+  @apply flex items-center justify-between px-6;
+  /* rgba解消 */
+  box-shadow: 0 4px 20px color-mix(in srgb, var(--navy) 15%, transparent);
+  position: relative;
+  z-index: 20;
+}
+
+.header-content {
+  @apply flex items-center gap-4;
+}
+
+.header-title {
+  @apply text-xl font-bold text-white;
+  transition: all 0.2s ease;
+}
+
+.header-title:hover {
+  color: var(--beige);
+}
+
+.header-subtitle {
+  color: var(--beige);
+  @apply text-sm;
+}
+
+@media (max-width: 767px) {
+  .header-subtitle {
+    display: none;
+  }
+}

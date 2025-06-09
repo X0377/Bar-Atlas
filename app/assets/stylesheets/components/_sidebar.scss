@@ -1,0 +1,119 @@
+.app-sidebar {
+  width: var(--sidebar-width);
+  @apply bg-white border-r border-gray-200 p-6 overflow-y-auto;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - var(--header-height));
+}
+
+.search-section {
+  @apply mb-8;
+}
+
+.search-input {
+  @apply w-full p-4 border-2 rounded-2xl;
+  border-color: var(--light);
+  background: var(--light);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  @apply outline-none bg-white;
+  border-color: var(--wine);
+  /* rgba解消 */
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--wine) 10%, transparent);
+}
+
+.filter-group {
+  margin-bottom: 24px;
+}
+
+.filter-title {
+  @apply font-bold mb-3 text-sm uppercase;
+  color: var(--navy);
+  letter-spacing: 0.5px;
+}
+
+.filter-options {
+  @apply flex flex-col gap-2;
+}
+
+.filter-option {
+  @apply flex items-center gap-3 p-3 rounded-xl cursor-pointer border-2 border-transparent;
+  transition: all 0.3s ease;
+}
+
+.filter-option:hover {
+  background: var(--light);
+  border-color: var(--beige);
+}
+
+.filter-option.active {
+  background: linear-gradient(135deg, var(--wine), #8b3a42);
+  color: white;
+  border-color: var(--wine);
+}
+
+.filter-icon {
+  @apply text-lg;
+}
+
+.filter-label {
+  @apply font-semibold flex-1;
+}
+
+.filter-count {
+  @apply text-xs bg-black bg-opacity-10 px-2 py-1 rounded-lg;
+}
+
+.filter-option.active .filter-count {
+  @apply bg-white bg-opacity-20;
+}
+
+.range-slider-container {
+  @apply my-4;
+}
+
+.range-slider {
+  @apply w-full h-2 rounded-full bg-gray-200 outline-none;
+  /* vendorPrefix解消 */
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--wine);
+  cursor: pointer;
+  /* rgba解消 */
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--wine) 30%, transparent);
+}
+
+.range-values {
+  @apply flex justify-between text-xs mt-2;
+  color: var(--dark-gray);
+}
+
+/* レスポンシブ */
+@media (max-width: 1023px) {
+  .app-sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid #e5e7eb;
+    @apply p-4;
+  }
+
+  .filter-options {
+    @apply flex-row flex-wrap;
+  }
+
+  .filter-option {
+    @apply flex-1 min-w-fit justify-center;
+  }
+}

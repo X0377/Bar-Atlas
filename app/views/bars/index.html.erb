@@ -1,42 +1,51 @@
-<div class="hero-section">
-  <div class="hero-content">
-    <h1 class="hero-title">
-      <span class="accent-gold">酔い</span>の<span class="accent-wine">地図帳</span>
-    </h1>
-    <p class="hero-subtitle">
-      今日はどこで酔う？
-    </p>
-    <%= search_form_for @q, local: true, class: "search-form" do |f| %>
-      <div class="search-container">
-        <div class="search-input-wrapper">
-          <%= f.search_field :name_or_address_cont,
-              placeholder: "バー名・エリアで検索...",
-              class: "search-input" %>
-        </div>
-        <div class="search-button-wrapper">
-          <%= f.submit "検索", class: "search-button" %>
-        </div>
-      </div>
-      <div class="quick-filters">
-        <%= link_to "🥃 ウイスキー", bars_path(q: { specialties_category_cont: "ウイスキー" }),
-            class: "filter-button" %>
-        <%= link_to "🍸 カクテル", bars_path(q: { specialties_category_cont: "カクテル" }),
-            class: "filter-button" %>
-        <%= link_to "🍾 シャンパン", bars_path(q: { specialties_category_cont: "シャンパン" }),
-            class: "filter-button" %>
-        <%= link_to "🍷 ワイン", bars_path(q: { specialties_category_cont: "ワイン" }),
-            class: "filter-button" %>
-      </div>
-    <% end %>
-    <div class="scroll-indicator">
-      <svg class="scroll-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-      </svg>
+<!-- app/views/bars/index.html.erb -->
+<div class="flex justify-between items-center mb-8">
+  <h2 class="content-title">おすすめのバー</h2>
+  <div class="flex gap-3 items-center">
+    <div class="flex bg-white rounded-xl p-1 shadow-lg">
+      <div class="px-4 py-2 bg-red-900 text-white rounded-lg text-sm font-semibold">📋 リスト</div>
+      <div class="px-4 py-2 text-gray-600 rounded-lg text-sm font-semibold">🗺️ 地図</div>
     </div>
   </div>
 </div>
-<div class="results-section">
-  <div class="results-container">
-    <!-- バー表示など今後記述 -->
-  </div>
+<div class="results-grid">
+  <% @bars.each do |bar| %>
+    <div class="bar-card">
+      <div class="bar-header">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-xl font-bold mb-2"><%= bar.name %></h3>
+            <div class="text-amber-200 text-sm">📍 <%= bar.address %></div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="bg-amber-200 text-slate-800 px-3 py-1 rounded-full text-xs font-bold">営業中</div>
+            <div class="bg-white bg-opacity-95 text-slate-800 px-3 py-1 rounded-full text-sm font-bold">⭐ 4.9</div>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <% bar.specialties.each do |specialty| %>
+            <span class="bg-gray-100 text-slate-800 px-3 py-1 rounded-full text-xs font-semibold hover:bg-amber-200 transition-colors"><%= specialty.category %></span>
+          <% end %>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div class="flex items-center gap-2 text-sm p-3 bg-gray-100 rounded-xl">
+            <span>💰</span>
+            <span><%= bar.price_range %></span>
+          </div>
+          <div class="flex items-center gap-2 text-sm p-3 bg-gray-100 rounded-xl">
+            <span>🕒</span>
+            <span>17:00-翌3:00</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-center gap-3">
+          <%= link_to "詳細を見る", bar_path(bar), class: "view-btn" %>
+          <button class="w-10 h-10 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center hover:border-red-900 hover:bg-red-900 hover:text-white transition-all">
+            ♡
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>

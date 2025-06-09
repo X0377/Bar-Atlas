@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>BarAtlas</title>
+    <title>酔いの地図帳</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body>
-    <%= yield %>
+  <body class="bg-gray-50">
+    <header class="app-header">
+      <div class="header-content">
+        <%= link_to "酔いの地図帳", root_path, class: "header-title" %>
+        <span class="header-subtitle">Professional Bar Search Platform</span>
+      </div>
+    </header>
+    <div class="main-layout">
+      <aside class="app-sidebar">
+        <%= render 'shared/search_sidebar' %>
+      </aside>
+      <main class="main-content">
+        <%= yield %>
+      </main>
+    </div>
   </body>
 </html>
