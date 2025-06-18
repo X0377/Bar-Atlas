@@ -1,61 +1,66 @@
-/* app/assets/stylesheets/application.tailwind.css */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
+@import "_variables.scss";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --navy: #1a2b3c;
-  --beige: #dac19c;
-  --wine: #722f37;
-  --wine-hover: #8b3a42;
-  --light: #f5f6f7;
+/* ベースフォント設定 */
+@layer base {
+  body {
+    font-family: var(--font-primary);
+  }
 }
 
 @layer components {
   .app-header {
     background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
-    @apply h-20 flex items-center justify-between px-6 shadow-lg fixed top-0 left-0 right-0 z-10;
+    @apply h-14 flex items-center justify-between px-5 shadow-lg fixed top-0 left-0 right-0 z-10;
   }
 
   .header-title {
-    @apply text-xl font-bold text-white hover:text-amber-200 transition-colors;
+    font-family: var(--font-primary);
+    @apply text-2xl font-semibold text-white hover:text-amber-200 transition-colors tracking-wide;
   }
 
   .main-layout {
-    @apply flex pt-20;
+    @apply flex pt-14;
     min-height: 100vh;
   }
 
   .app-sidebar {
-    width: 280px;
-    height: calc(100vh - 80px); /* ヘッダーの高さを引いたビューポートの高さ */
-    @apply bg-white border-r border-gray-200 p-6 overflow-y-auto sticky top-20;
+    width: 240px;
+    height: calc(100vh - 56px);
+    @apply bg-white border-r border-gray-200 p-3 overflow-y-auto sticky top-14;
   }
 
   .main-content {
-    @apply flex-1 p-8;
+    @apply flex-1 p-4;
   }
 
   /* ---　ヘッダー --- */
   .section-header {
-    @apply flex justify-between items-center mb-8;
+    @apply flex justify-between items-center mb-4;
   }
 
   .section-title {
     color: var(--navy);
-    @apply text-3xl font-bold;
+    font-family: var(--font-primary);
+    @apply text-xl font-semibold tracking-tight;
   }
 
   .controls-container {
-    @apply flex gap-3 items-center;
+    @apply flex gap-2 items-center;
   }
 
   .view-toggle {
-    @apply flex bg-white rounded-xl p-1 shadow-md border border-gray-100;
+    @apply flex bg-white rounded-lg p-0.5 shadow-sm border border-gray-100;
   }
 
   .view-toggle-button {
-    @apply px-4 py-2 flex items-center gap-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors;
+    font-family: var(--font-primary);
+    @apply px-2.5 py-1.5 flex items-center gap-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors;
   }
 
   .view-toggle-button.active {
@@ -69,21 +74,22 @@
 
   .sort-select {
     color: var(--navy);
-    @apply bg-white border-2 border-gray-200 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors;
+    font-family: var(--font-primary);
+    @apply bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-medium cursor-pointer transition-colors;
   }
 
   /* --- バーカード --- */
   .bar-grid {
-    @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+    @apply grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3;
   }
 
   .bar-card {
-    @apply bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 border-transparent;
+    @apply bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-pointer border border-gray-100;
   }
 
   .bar-card-header {
     background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
-    @apply p-6 text-white;
+    @apply p-3 text-white;
   }
 
   .bar-card-header-content {
@@ -91,57 +97,64 @@
   }
 
   .bar-card-title {
-    @apply text-xl font-bold mb-2 leading-tight;
+    font-family: var(--font-primary);
+    @apply text-base font-semibold mb-0.5 leading-snug;
   }
 
   .bar-card-address {
-    @apply text-amber-200 text-sm font-medium;
+    font-family: var(--font-primary);
+    @apply text-amber-200 text-xs font-normal;
   }
 
   .bar-card-tags {
-    @apply flex flex-col gap-2 items-end;
+    @apply flex flex-col gap-1 items-end;
   }
 
   .status-tag {
     background-color: var(--beige);
-    @apply px-3 py-1 rounded-full text-xs font-bold uppercase text-slate-800;
+    font-family: var(--font-primary);
+    @apply px-1.5 py-0.5 rounded text-xs font-medium uppercase text-slate-800;
   }
 
   .rating-tag {
-    @apply bg-white bg-opacity-95 text-slate-800 px-3 py-1 rounded-full text-sm font-bold;
+    font-family: var(--font-primary);
+    @apply bg-white bg-opacity-90 text-slate-800 px-1.5 py-0.5 rounded text-xs font-medium;
   }
 
   .bar-card-body {
-    @apply p-6;
+    @apply p-3;
   }
 
   .specialty-tags-container {
-    @apply flex gap-2 mb-4 flex-wrap;
+    @apply flex gap-1 mb-2 flex-wrap;
   }
 
   .specialty-tag {
-    @apply bg-gray-100 text-slate-800 px-3 py-1 rounded-full text-xs font-semibold hover:bg-amber-200 transition-colors cursor-pointer;
+    font-family: var(--font-primary);
+    @apply bg-gray-100 text-slate-700 px-1.5 py-0.5 rounded-md text-xs font-normal hover:bg-amber-200 transition-colors cursor-pointer;
   }
 
   .info-grid {
-    @apply grid grid-cols-2 gap-4 mb-5;
+    @apply grid grid-cols-2 gap-2 mb-3;
   }
 
   .info-item {
-    @apply flex items-center gap-2 text-sm p-3 bg-gray-50 rounded-xl text-gray-700;
+    font-family: var(--font-primary);
+    @apply flex items-center gap-1.5 text-xs p-1.5 bg-gray-50 rounded-md text-gray-600;
   }
 
   .card-actions {
-    @apply flex justify-between items-center gap-3;
+    @apply flex justify-between items-center gap-2;
   }
 
   .detail-button {
     background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
-    @apply flex-1 text-white text-center py-3 rounded-xl font-bold text-sm hover:-translate-y-0.5 transition-all duration-300 hover:shadow-lg;
+    font-family: var(--font-primary);
+    @apply flex-1 text-white text-center py-1.5 rounded-md font-medium text-xs hover:-translate-y-0.5 transition-all duration-300 hover:shadow-sm;
   }
 
   .favorite-button {
-    @apply w-10 h-10 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center transition-all duration-300;
+    @apply w-7 h-7 rounded-md border border-gray-200 bg-white flex items-center justify-center transition-all duration-300;
   }
   .favorite-button:hover {
     background-color: var(--wine);
@@ -150,7 +163,8 @@
 
   /* --- サイドバー --- */
   .search-input {
-    @apply w-full p-4 border-2 border-gray-200 rounded-2xl transition-all duration-300 bg-gray-50 focus:outline-none focus:bg-white;
+    font-family: var(--font-primary);
+    @apply w-full p-2.5 border border-gray-200 rounded-lg transition-all duration-300 bg-gray-50 focus:outline-none focus:bg-white text-sm;
   }
 
   .search-input:focus {
@@ -158,15 +172,16 @@
   }
 
   .sidebar-section-title {
-    @apply font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide;
+    font-family: var(--font-primary);
+    @apply font-medium text-gray-800 mb-1.5 text-xs uppercase tracking-wider;
   }
 
   .filter-options-container {
-    @apply flex flex-col gap-2;
+    @apply flex flex-col gap-1;
   }
 
   .filter-option {
-    @apply flex items-center gap-3 p-3 rounded-2xl cursor-pointer border-2 border-transparent transition-all;
+    @apply flex items-center gap-2 p-2 rounded-lg cursor-pointer border border-transparent transition-all;
   }
 
   .filter-option:not(.active) {
@@ -175,15 +190,17 @@
 
   .filter-option.active {
     background: var(--wine);
-    @apply text-white shadow-lg;
+    @apply text-white shadow-sm;
   }
 
   .filter-option-label {
-    @apply font-semibold flex-1;
+    font-family: var(--font-primary);
+    @apply font-normal flex-1 text-sm;
   }
 
   .filter-option-count {
-    @apply text-xs bg-gray-200 px-2 py-1 rounded-lg;
+    font-family: var(--font-primary);
+    @apply text-xs bg-gray-200 px-1.5 py-0.5 rounded;
   }
 
   .filter-option.active .filter-option-count {
@@ -191,17 +208,17 @@
   }
 
   .range-slider {
-    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+    @apply w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer;
   }
   .range-slider::-webkit-slider-thumb {
-    @apply w-5 h-5 rounded-full bg-white border-4 border-solid cursor-pointer;
-    border-color: var(--wine);
+    @apply w-4 h-4 rounded-full bg-white cursor-pointer;
+    border: 3px solid var(--wine);
     -webkit-appearance: none;
     box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
   }
   .range-slider::-moz-range-thumb {
-    @apply w-5 h-5 rounded-full bg-white border-4 border-solid cursor-pointer;
-    border-color: var(--wine);
+    @apply w-4 h-4 rounded-full bg-white cursor-pointer;
+    border: 3px solid var(--wine);
     box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
   }
 }
@@ -209,13 +226,43 @@
 /* --- レスポンシブ --- */
 @media (max-width: 1023px) {
   .main-layout {
-    @apply flex-col pt-20;
+    @apply flex-col pt-14;
   }
 
   .app-sidebar {
     width: 100%;
     height: auto;
     position: static;
-    @apply top-0; /* stickyを解除 */
+    @apply top-0 p-2.5;
+  }
+
+  .section-header {
+    @apply flex-col gap-2 items-start mb-3;
+  }
+
+  .bar-grid {
+    @apply grid-cols-1 gap-2.5;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-content {
+    @apply p-2.5;
+  }
+
+  .section-title {
+    @apply text-lg;
+  }
+
+  .app-header {
+    @apply h-12 px-3;
+  }
+
+  .header-title {
+    @apply text-sm;
+  }
+
+  .main-layout {
+    @apply pt-12;
   }
 }
