@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
-  <body class="bg-gray-50">
+  <body class="bg-gray-100">
     <header class="app-header">
-      <div class="header-content">
+      <div class="flex items-center gap-6">
         <%= link_to "酔いの地図帳", root_path, class: "header-title" %>
-        <span class="header-subtitle">Professional Bar Search Platform</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- ユーザーメニュー用 -->
       </div>
     </header>
     <div class="main-layout">

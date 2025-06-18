@@ -1,34 +1,65 @@
-<!-- app/views/shared/_search_sidebar.html.erb -->
 <div class="mb-8">
   <%= form_with url: bars_path, method: :get, local: true do |f| %>
-    <%= f.text_field :search, 
-        placeholder: "バーを検索...", 
+    <%= f.text_field :search,
+        placeholder: "バーを検索...",
         class: "search-input",
         value: params[:search] %>
   <% end %>
 </div>
 <div class="mb-6">
-  <div class="font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide">お酒の種類</div>
-  <div class="flex flex-col gap-2">
+  <div class="sidebar-section-title">お酒の種類</div>
+  <div class="filter-options-container">
     <div class="filter-option active">
       <span class="text-lg">🍸</span>
-      <span class="font-semibold flex-1">カクテル</span>
-      <span class="text-xs bg-white bg-opacity-20 px-2 py-1 rounded-lg">52</span>
+      <span class="filter-option-label">カクテル</span>
+      <span class="filter-option-count">52</span>
     </div>
     <div class="filter-option">
       <span class="text-lg">🥃</span>
-      <span class="font-semibold flex-1">ウイスキー</span>
-      <span class="text-xs bg-gray-200 px-2 py-1 rounded-lg">38</span>
+      <span class="filter-option-label">ウイスキー</span>
+      <span class="filter-option-count">38</span>
     </div>
     <div class="filter-option">
       <span class="text-lg">🍷</span>
-      <span class="font-semibold flex-1">ワイン</span>
-      <span class="text-xs bg-gray-200 px-2 py-1 rounded-lg">29</span>
+      <span class="filter-option-label">ワイン</span>
+      <span class="filter-option-count">29</span>
     </div>
     <div class="filter-option">
       <span class="text-lg">🍶</span>
-      <span class="font-semibold flex-1">日本酒</span>
-      <span class="text-xs bg-gray-200 px-2 py-1 rounded-lg">15</span>
+      <span class="filter-option-label">日本酒</span>
+      <span class="filter-option-count">15</span>
+    </div>
+  </div>
+</div>
+<div class="mb-6">
+  <div class="sidebar-section-title">予算範囲</div>
+  <div class="px-2">
+    <input type="range" min="1000" max="15000" value="5000" class="range-slider">
+    <div class="flex justify-between text-xs text-gray-600 mt-2">
+      <span>¥1,000</span>
+      <span class="font-bold" style="color: var(--wine)">¥5,000</span>
+      <span>¥15,000</span>
+    </div>
+  </div>
+</div>
+<div class="mb-6">
+  <div class="sidebar-section-title">エリア</div>
+  <div class="filter-options-container">
+    <div class="filter-option">
+      <span class="filter-option-label">新宿</span>
+      <span class="filter-option-count">25</span>
+    </div>
+    <div class="filter-option">
+      <span class="filter-option-label">六本木</span>
+      <span class="filter-option-count">32</span>
+    </div>
+    <div class="filter-option">
+      <span class="filter-option-label">恵比寿</span>
+      <span class="filter-option-count">28</span>
+    </div>
+    <div class="filter-option">
+      <span class="filter-option-label">渋谷</span>
+      <span class="filter-option-count">19</span>
     </div>
   </div>
 </div>

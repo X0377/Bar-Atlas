@@ -3,103 +3,219 @@
 @tailwind components;
 @tailwind utilities;
 
-/* カスタム変数 */
 :root {
   --navy: #1a2b3c;
   --beige: #dac19c;
   --wine: #722f37;
+  --wine-hover: #8b3a42;
   --light: #f5f6f7;
 }
 
-/* ヘッダー */
-.app-header {
-  background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
-  height: 80px;
-  @apply flex items-center justify-between px-6;
-  box-shadow: 0 4px 20px rgba(26, 43, 60, 0.15);
+@layer components {
+  .app-header {
+    background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
+    @apply h-20 flex items-center justify-between px-6 shadow-lg fixed top-0 left-0 right-0 z-10;
+  }
+
+  .header-title {
+    @apply text-xl font-bold text-white hover:text-amber-200 transition-colors;
+  }
+
+  .main-layout {
+    @apply flex pt-20;
+    min-height: 100vh;
+  }
+
+  .app-sidebar {
+    width: 280px;
+    height: calc(100vh - 80px); /* ヘッダーの高さを引いたビューポートの高さ */
+    @apply bg-white border-r border-gray-200 p-6 overflow-y-auto sticky top-20;
+  }
+
+  .main-content {
+    @apply flex-1 p-8;
+  }
+
+  /* ---　ヘッダー --- */
+  .section-header {
+    @apply flex justify-between items-center mb-8;
+  }
+
+  .section-title {
+    color: var(--navy);
+    @apply text-3xl font-bold;
+  }
+
+  .controls-container {
+    @apply flex gap-3 items-center;
+  }
+
+  .view-toggle {
+    @apply flex bg-white rounded-xl p-1 shadow-md border border-gray-100;
+  }
+
+  .view-toggle-button {
+    @apply px-4 py-2 flex items-center gap-2 rounded-lg text-sm font-semibold cursor-pointer transition-colors;
+  }
+
+  .view-toggle-button.active {
+    background-color: var(--wine);
+    @apply text-white;
+  }
+
+  .view-toggle-button:not(.active) {
+    @apply text-gray-600 hover:bg-gray-50;
+  }
+
+  .sort-select {
+    color: var(--navy);
+    @apply bg-white border-2 border-gray-200 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer transition-colors;
+  }
+
+  /* --- バーカード --- */
+  .bar-grid {
+    @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+  }
+
+  .bar-card {
+    @apply bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer border-2 border-transparent;
+  }
+
+  .bar-card-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
+    @apply p-6 text-white;
+  }
+
+  .bar-card-header-content {
+    @apply flex justify-between items-start;
+  }
+
+  .bar-card-title {
+    @apply text-xl font-bold mb-2 leading-tight;
+  }
+
+  .bar-card-address {
+    @apply text-amber-200 text-sm font-medium;
+  }
+
+  .bar-card-tags {
+    @apply flex flex-col gap-2 items-end;
+  }
+
+  .status-tag {
+    background-color: var(--beige);
+    @apply px-3 py-1 rounded-full text-xs font-bold uppercase text-slate-800;
+  }
+
+  .rating-tag {
+    @apply bg-white bg-opacity-95 text-slate-800 px-3 py-1 rounded-full text-sm font-bold;
+  }
+
+  .bar-card-body {
+    @apply p-6;
+  }
+
+  .specialty-tags-container {
+    @apply flex gap-2 mb-4 flex-wrap;
+  }
+
+  .specialty-tag {
+    @apply bg-gray-100 text-slate-800 px-3 py-1 rounded-full text-xs font-semibold hover:bg-amber-200 transition-colors cursor-pointer;
+  }
+
+  .info-grid {
+    @apply grid grid-cols-2 gap-4 mb-5;
+  }
+
+  .info-item {
+    @apply flex items-center gap-2 text-sm p-3 bg-gray-50 rounded-xl text-gray-700;
+  }
+
+  .card-actions {
+    @apply flex justify-between items-center gap-3;
+  }
+
+  .detail-button {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
+    @apply flex-1 text-white text-center py-3 rounded-xl font-bold text-sm hover:-translate-y-0.5 transition-all duration-300 hover:shadow-lg;
+  }
+
+  .favorite-button {
+    @apply w-10 h-10 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center transition-all duration-300;
+  }
+  .favorite-button:hover {
+    background-color: var(--wine);
+    @apply border-red-900 text-white;
+  }
+
+  /* --- サイドバー --- */
+  .search-input {
+    @apply w-full p-4 border-2 border-gray-200 rounded-2xl transition-all duration-300 bg-gray-50 focus:outline-none focus:bg-white;
+  }
+
+  .search-input:focus {
+    border-color: var(--wine);
+  }
+
+  .sidebar-section-title {
+    @apply font-bold text-gray-800 mb-3 text-sm uppercase tracking-wide;
+  }
+
+  .filter-options-container {
+    @apply flex flex-col gap-2;
+  }
+
+  .filter-option {
+    @apply flex items-center gap-3 p-3 rounded-2xl cursor-pointer border-2 border-transparent transition-all;
+  }
+
+  .filter-option:not(.active) {
+    @apply hover:bg-gray-50;
+  }
+
+  .filter-option.active {
+    background: var(--wine);
+    @apply text-white shadow-lg;
+  }
+
+  .filter-option-label {
+    @apply font-semibold flex-1;
+  }
+
+  .filter-option-count {
+    @apply text-xs bg-gray-200 px-2 py-1 rounded-lg;
+  }
+
+  .filter-option.active .filter-option-count {
+    @apply bg-white bg-opacity-20;
+  }
+
+  .range-slider {
+    @apply w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer;
+  }
+  .range-slider::-webkit-slider-thumb {
+    @apply w-5 h-5 rounded-full bg-white border-4 border-solid cursor-pointer;
+    border-color: var(--wine);
+    -webkit-appearance: none;
+    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
+  }
+  .range-slider::-moz-range-thumb {
+    @apply w-5 h-5 rounded-full bg-white border-4 border-solid cursor-pointer;
+    border-color: var(--wine);
+    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
+  }
 }
 
-.header-title {
-  @apply text-xl font-bold text-white;
-}
-
-.header-subtitle {
-  color: var(--beige);
-  @apply text-sm hidden lg:block;
-}
-
-/* レイアウト */
-.main-layout {
-  @apply flex;
-  min-height: calc(100vh - 80px);
-}
-
-.app-sidebar {
-  width: 280px;
-  @apply bg-white border-r border-gray-200 p-6 overflow-y-auto;
-  position: sticky;
-  top: 0;
-  height: calc(100vh - 80px);
-}
-
-.main-content {
-  @apply flex-1 p-8;
-}
-
-/* サイドバー */
-.search-input {
-  @apply w-full p-4 border-2 border-gray-200 rounded-2xl transition-all duration-300 bg-gray-50;
-}
-
-.search-input:focus {
-  @apply outline-none border-red-900 bg-white;
-}
-
-.filter-option {
-  @apply flex items-center gap-3 p-3 rounded-xl cursor-pointer border-2 border-transparent transition-all;
-}
-
-.filter-option:hover {
-  @apply bg-gray-50 border-amber-200;
-}
-
-.filter-option.active {
-  background: linear-gradient(135deg, var(--wine), #8b3a42);
-  @apply text-white border-red-900;
-}
-
-/* バーカード */
-.bar-card {
-  @apply bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer border-2 border-transparent hover:border-amber-200;
-}
-
-.bar-header {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
-  @apply p-6 text-white;
-}
-
-.view-btn {
-  @apply flex-1 bg-gradient-to-br from-slate-800 to-red-900 text-white text-center py-3 rounded-xl font-bold text-sm hover:-translate-y-0.5 transition-all;
-}
-
-/* メインコンテンツ */
-.content-title {
-  @apply text-3xl font-bold text-slate-800;
-}
-
-.results-grid {
-  @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
-}
-
-/* レスポンシブ */
+/* --- レスポンシブ --- */
 @media (max-width: 1023px) {
   .main-layout {
-    @apply flex-col;
+    @apply flex-col pt-20;
   }
 
   .app-sidebar {
     width: 100%;
     height: auto;
     position: static;
+    @apply top-0; /* stickyを解除 */
   }
 }
