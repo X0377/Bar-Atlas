@@ -6,7 +6,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ベースフォント設定 */
 @layer base {
   body {
     font-family: var(--font-primary);
@@ -16,51 +15,52 @@
 @layer components {
   .app-header {
     background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
-    @apply h-14 flex items-center justify-between px-5 shadow-lg fixed top-0 left-0 right-0 z-10;
+    @apply h-16 flex items-center justify-between px-6 shadow-md fixed top-0 left-0 right-0 z-10;
   }
 
   .header-title {
     font-family: var(--font-primary);
-    @apply text-2xl font-semibold text-white hover:text-amber-200 transition-colors tracking-wide;
+    @apply text-xl font-semibold text-white hover:text-amber-200 transition-colors tracking-tight;
   }
 
   .main-layout {
-    @apply flex pt-14;
+    @apply flex pt-16;
     min-height: 100vh;
+    background: #f8fafc;
   }
 
   .app-sidebar {
-    width: 240px;
-    height: calc(100vh - 56px);
-    @apply bg-white border-r border-gray-200 p-3 overflow-y-auto sticky top-14;
+    width: 270px;
+    height: calc(100vh - 64px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    @apply border-r border-gray-200 p-5 overflow-y-auto sticky top-16;
   }
 
   .main-content {
-    @apply flex-1 p-4;
+    @apply flex-1 p-6;
   }
-
-  /* ---　ヘッダー --- */
   .section-header {
-    @apply flex justify-between items-center mb-4;
+    @apply flex justify-between items-center mb-8;
   }
 
   .section-title {
     color: var(--navy);
     font-family: var(--font-primary);
-    @apply text-xl font-semibold tracking-tight;
+    @apply text-3xl font-bold tracking-tight;
   }
 
   .controls-container {
-    @apply flex gap-2 items-center;
+    @apply flex gap-3 items-center;
   }
 
   .view-toggle {
-    @apply flex bg-white rounded-lg p-0.5 shadow-sm border border-gray-100;
+    @apply flex bg-white rounded-lg p-1 shadow-sm border border-gray-100;
   }
 
   .view-toggle-button {
     font-family: var(--font-primary);
-    @apply px-2.5 py-1.5 flex items-center gap-1.5 rounded-md text-xs font-medium cursor-pointer transition-colors;
+    @apply px-3 py-2 flex items-center gap-2 rounded-md text-sm font-medium cursor-pointer transition-colors;
   }
 
   .view-toggle-button.active {
@@ -75,113 +75,156 @@
   .sort-select {
     color: var(--navy);
     font-family: var(--font-primary);
-    @apply bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs font-medium cursor-pointer transition-colors;
+    @apply bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium cursor-pointer transition-colors;
   }
 
-  /* --- バーカード --- */
   .bar-grid {
-    @apply grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3;
+    @apply grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5;
   }
 
   .bar-card {
-    @apply bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-pointer border border-gray-100;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+    @apply overflow-hidden transition-all duration-300 hover:-translate-y-1 cursor-pointer;
   }
 
+  .bar-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  /* === バーカードヘッダー：画像対応用 === */
   .bar-card-header {
     background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
-    @apply p-3 text-white;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    @apply p-5 text-white;
+  }
+
+  .bar-card-header.has-image::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(26, 43, 60, 0.85) 0%,
+      rgba(114, 47, 55, 0.85) 100%
+    );
+    z-index: 1;
   }
 
   .bar-card-header-content {
+    position: relative;
+    z-index: 2;
     @apply flex justify-between items-start;
   }
 
   .bar-card-title {
     font-family: var(--font-primary);
-    @apply text-base font-semibold mb-0.5 leading-snug;
+    @apply text-lg font-semibold mb-1 leading-snug;
   }
 
   .bar-card-address {
     font-family: var(--font-primary);
-    @apply text-amber-200 text-xs font-normal;
+    @apply text-amber-100 text-sm font-normal;
   }
 
   .bar-card-tags {
-    @apply flex flex-col gap-1 items-end;
+    @apply flex flex-col gap-1.5 items-end;
   }
 
   .status-tag {
     background-color: var(--beige);
     font-family: var(--font-primary);
-    @apply px-1.5 py-0.5 rounded text-xs font-medium uppercase text-slate-800;
+    @apply px-2 py-1 rounded-md text-xs font-medium uppercase text-slate-800;
   }
 
   .rating-tag {
     font-family: var(--font-primary);
-    @apply bg-white bg-opacity-90 text-slate-800 px-1.5 py-0.5 rounded text-xs font-medium;
+    @apply bg-white bg-opacity-90 text-slate-800 px-2 py-1 rounded-md text-xs font-medium;
   }
 
   .bar-card-body {
-    @apply p-3;
+    @apply p-5 space-y-4;
   }
 
   .specialty-tags-container {
-    @apply flex gap-1 mb-2 flex-wrap;
+    @apply flex gap-2 flex-wrap;
   }
 
   .specialty-tag {
     font-family: var(--font-primary);
-    @apply bg-gray-100 text-slate-700 px-1.5 py-0.5 rounded-md text-xs font-normal hover:bg-amber-200 transition-colors cursor-pointer;
+    @apply bg-gray-100 text-slate-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-amber-100 transition-colors cursor-pointer;
   }
-
   .info-grid {
-    @apply grid grid-cols-2 gap-2 mb-3;
+    @apply space-y-3;
   }
 
   .info-item {
     font-family: var(--font-primary);
-    @apply flex items-center gap-1.5 text-xs p-1.5 bg-gray-50 rounded-md text-gray-600;
+    @apply flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0;
+  }
+
+  .info-icon {
+    @apply w-4 h-4 text-gray-400 mr-2;
+  }
+
+  .info-label {
+    @apply flex items-center text-sm text-gray-600 font-medium;
+  }
+
+  .info-value {
+    @apply text-sm text-gray-900 font-semibold;
   }
 
   .card-actions {
-    @apply flex justify-between items-center gap-2;
+    @apply flex justify-between items-center gap-3;
   }
 
   .detail-button {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
+    background: var(--navy);
     font-family: var(--font-primary);
-    @apply flex-1 text-white text-center py-1.5 rounded-md font-medium text-xs hover:-translate-y-0.5 transition-all duration-300 hover:shadow-sm;
+    @apply flex-1 text-white text-center py-2.5 rounded-lg font-medium text-sm hover:-translate-y-0.5 transition-all duration-300;
+  }
+
+  .detail-button:hover {
+    box-shadow: 0 4px 12px rgba(114, 47, 55, 0.3);
   }
 
   .favorite-button {
-    @apply w-7 h-7 rounded-md border border-gray-200 bg-white flex items-center justify-center transition-all duration-300;
+    @apply w-9 h-9 rounded-lg border border-gray-200 bg-white flex items-center justify-center transition-all duration-300;
   }
+
   .favorite-button:hover {
     background-color: var(--wine);
     @apply border-red-900 text-white;
   }
 
-  /* --- サイドバー --- */
   .search-input {
     font-family: var(--font-primary);
-    @apply w-full p-2.5 border border-gray-200 rounded-lg transition-all duration-300 bg-gray-50 focus:outline-none focus:bg-white text-sm;
+    @apply w-full p-3 border border-gray-200 rounded-lg transition-all duration-300 bg-white focus:outline-none focus:ring-2 focus:ring-opacity-50 text-sm;
   }
 
   .search-input:focus {
     border-color: var(--wine);
+    --tw-ring-color: rgb(114 47 55 / 0.5);
   }
 
   .sidebar-section-title {
     font-family: var(--font-primary);
-    @apply font-medium text-gray-800 mb-1.5 text-xs uppercase tracking-wider;
+    @apply font-medium text-gray-800 mb-3 text-sm uppercase tracking-wide;
   }
 
   .filter-options-container {
-    @apply flex flex-col gap-1;
+    @apply flex flex-col gap-1.5;
   }
 
   .filter-option {
-    @apply flex items-center gap-2 p-2 rounded-lg cursor-pointer border border-transparent transition-all;
+    @apply flex items-center gap-3 p-3 rounded-lg cursor-pointer border border-transparent transition-all;
   }
 
   .filter-option:not(.active) {
@@ -195,12 +238,12 @@
 
   .filter-option-label {
     font-family: var(--font-primary);
-    @apply font-normal flex-1 text-sm;
+    @apply font-medium flex-1 text-sm;
   }
 
   .filter-option-count {
     font-family: var(--font-primary);
-    @apply text-xs bg-gray-200 px-1.5 py-0.5 rounded;
+    @apply text-xs bg-gray-200 px-2 py-1 rounded-md;
   }
 
   .filter-option.active .filter-option-count {
@@ -208,61 +251,59 @@
   }
 
   .range-slider {
-    @apply w-full h-1.5 bg-gray-200 rounded-full appearance-none cursor-pointer;
+    @apply w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer;
   }
+
   .range-slider::-webkit-slider-thumb {
     @apply w-4 h-4 rounded-full bg-white cursor-pointer;
-    border: 3px solid var(--wine);
+    border: 2px solid var(--wine);
     -webkit-appearance: none;
-    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
+    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.25);
   }
+
   .range-slider::-moz-range-thumb {
     @apply w-4 h-4 rounded-full bg-white cursor-pointer;
-    border: 3px solid var(--wine);
-    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.3);
+    border: 2px solid var(--wine);
+    box-shadow: 0 2px 6px rgba(114, 47, 55, 0.25);
   }
 }
 
-/* --- レスポンシブ --- */
+/* === レスポンシブ === */
 @media (max-width: 1023px) {
   .main-layout {
-    @apply flex-col pt-14;
+    @apply flex-col pt-16;
   }
 
   .app-sidebar {
     width: 100%;
     height: auto;
     position: static;
-    @apply top-0 p-2.5;
+    @apply top-0 p-4;
   }
 
   .section-header {
-    @apply flex-col gap-2 items-start mb-3;
+    @apply flex-col gap-3 items-start mb-4;
   }
 
   .bar-grid {
-    @apply grid-cols-1 gap-2.5;
+    @apply grid-cols-1 gap-4;
   }
 }
 
 @media (max-width: 640px) {
   .main-content {
-    @apply p-2.5;
+    @apply p-4;
   }
 
   .section-title {
-    @apply text-lg;
+    @apply text-xl;
   }
 
   .app-header {
-    @apply h-12 px-3;
+    @apply px-4;
   }
 
   .header-title {
-    @apply text-sm;
-  }
-
-  .main-layout {
-    @apply pt-12;
+    @apply text-base;
   }
 }
