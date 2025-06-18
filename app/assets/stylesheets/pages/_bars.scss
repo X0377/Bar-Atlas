@@ -1,0 +1,83 @@
+.main-layout {
+  @apply flex;
+  min-height: calc(100vh - var(--header-height));
+}
+
+.main-content {
+  @apply flex-1 p-8;
+}
+
+.content-header {
+  @apply flex justify-between items-center mb-8;
+}
+
+.content-title {
+  @apply text-3xl font-bold;
+  color: var(--navy);
+}
+
+.view-controls {
+  @apply flex gap-3 items-center;
+}
+
+.view-toggle {
+  @apply flex bg-white rounded-xl p-1 shadow-lg;
+}
+
+.toggle-btn {
+  @apply px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background: var(--wine);
+  color: white;
+}
+
+.sort-dropdown {
+  @apply bg-white border-2 rounded-xl px-4 py-2 text-sm font-semibold cursor-pointer;
+  border-color: var(--light);
+  color: var(--navy);
+  transition: all 0.3s ease;
+}
+
+.sort-dropdown:hover {
+  border-color: var(--beige);
+}
+
+.results-grid {
+  @apply grid gap-6;
+  /* minmax警告解消：Tailwindクラスに変更 */
+  @apply grid-cols-1 lg:grid-cols-2 xl:grid-cols-3;
+}
+
+/* レスポンシブ */
+@media (max-width: 1023px) {
+  .main-layout {
+    flex-direction: column;
+  }
+
+  .content-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .view-controls {
+    @apply w-full justify-between;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-content {
+    @apply p-4;
+  }
+
+  .content-title {
+    @apply text-2xl;
+  }
+
+  .results-grid {
+    @apply grid-cols-1;
+  }
+}

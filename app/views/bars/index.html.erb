@@ -1,29 +1,51 @@
-<% content_for :title, "Bars" %>
-
-<div class="w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
-
-  <div class="flex justify-between items-center">
-    <h1 class="font-bold text-4xl">Bars</h1>
-    <%= link_to "New bar", new_bar_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium" %>
+<!-- app/views/bars/index.html.erb -->
+<div class="flex justify-between items-center mb-8">
+  <h2 class="content-title">おすすめのバー</h2>
+  <div class="flex gap-3 items-center">
+    <div class="flex bg-white rounded-xl p-1 shadow-lg">
+      <div class="px-4 py-2 bg-red-900 text-white rounded-lg text-sm font-semibold">📋 リスト</div>
+      <div class="px-4 py-2 text-gray-600 rounded-lg text-sm font-semibold">🗺️ 地図</div>
+    </div>
   </div>
-
-  <div id="bars" class="min-w-full divide-y divide-gray-200 space-y-5">
-    <% if @bars.any? %>
-      <% @bars.each do |bar| %>
-        <div class="flex flex-col sm:flex-row justify-between items-center pb-5 sm:pb-0">
-          <%= render bar %>
-          <div class="w-full sm:w-auto flex flex-col sm:flex-row space-x-2 space-y-2">
-            <%= link_to "Show", bar, class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= link_to "Edit", edit_bar_path(bar), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-            <%= button_to "Destroy", bar, method: :delete, class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+</div>
+<div class="results-grid">
+  <% @bars.each do |bar| %>
+    <div class="bar-card">
+      <div class="bar-header">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="text-xl font-bold mb-2"><%= bar.name %></h3>
+            <div class="text-amber-200 text-sm">📍 <%= bar.address %></div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="bg-amber-200 text-slate-800 px-3 py-1 rounded-full text-xs font-bold">営業中</div>
+            <div class="bg-white bg-opacity-95 text-slate-800 px-3 py-1 rounded-full text-sm font-bold">⭐ 4.9</div>
           </div>
         </div>
-      <% end %>
-    <% else %>
-      <p class="text-center my-10">No bars found.</p>
-    <% end %>
-  </div>
+      </div>
+      <div class="p-6">
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <% bar.specialties.each do |specialty| %>
+            <span class="bg-gray-100 text-slate-800 px-3 py-1 rounded-full text-xs font-semibold hover:bg-amber-200 transition-colors"><%= specialty.category %></span>
+          <% end %>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div class="flex items-center gap-2 text-sm p-3 bg-gray-100 rounded-xl">
+            <span>💰</span>
+            <span><%= bar.price_range %></span>
+          </div>
+          <div class="flex items-center gap-2 text-sm p-3 bg-gray-100 rounded-xl">
+            <span>🕒</span>
+            <span>17:00-翌3:00</span>
+          </div>
+        </div>
+        <div class="flex justify-between items-center gap-3">
+          <%= link_to "詳細を見る", bar_path(bar), class: "view-btn" %>
+          <button class="w-10 h-10 rounded-xl border-2 border-gray-200 bg-white flex items-center justify-center hover:border-red-900 hover:bg-red-900 hover:text-white transition-all">
+            ♡
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
