@@ -1,62 +1,60 @@
 class BarsController < ApplicationController
-  before_action :set_bar, only: %i[ show edit update destroy ]
+  before_action :set_bar, only: %i[show]
 
-  # GET /bars
   def index
-    @q = Bar.ransack(params[:q])
+    @q = Bar.ransack(search_params)
     @bars = @q.result.includes(:specialties)
 
-    @bars = @bars.limit(12) if params[:q].blank?
+    @bars = apply_sorting(@bars)
+
+    if helpers.search_performed?
+      @bars = @bars.page(params[:page]).per(20)
+    else
+      @bars = @bars.limit(12)
+    end
+
+    @total_count = @q.result.count if helpers.search_performed?
   end
 
-  # GET /bars/1
   def show
     @bar = Bar.find(params[:id])
   end
 
-  # GET /bars/new
-  def new
-    @bar = Bar.new
-  end
-
-  # GET /bars/1/edit
-  def edit
-  end
-
-  # POST /bars
-  def create
-    @bar = Bar.new(bar_params)
-
-    if @bar.save
-      redirect_to @bar, notice: "Bar was successfully created."
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /bars/1
-  def update
-    if @bar.update(bar_params)
-      redirect_to @bar, notice: "Bar was successfully updated.", status: :see_other
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /bars/1
-  def destroy
-    @bar.destroy!
-    redirect_to bars_url, notice: "Bar was successfully destroyed.", status: :see_other
-  end
-
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_bar
-      @bar = Bar.find(params[:id])
-    end
 
-    # Only allow a list of trusted parameters through.
-    def bar_params
-      params.require(:bar).permit(:name, :address, :price_range, :smoking_status, :description)
+  def set_bar
+    @bar = Bar.find(params[:id])
+  end
+
+  # 後日実装予定
+  def apply_sorting(relation)
+    case params[:sort]
+    when 'created_at_desc'
+      relation.order(created_at: :desc)
+    when 'name_asc'
+      relation.order(:name)
+    else
+      relation.order(created_at: :desc)
     end
+  end
+
+  def bar_params
+    params.require(:bar).permit(
+      :name, :address, :price_range, :smoking_status,
+      :description, :phone, :business_hours, :image_url
+    )
+  end
+
+  def search_params
+    params.fetch(:q, {}).permit(
+      :name_cont,           # バー名部分一致
+      :address_cont,        # 住所部分一致
+      :price_range_eq,      # 価格帯完全一致
+      :smoking_status_eq,   # 喫煙状況完全一致
+      :description_cont,    # 説明部分一致
+      :phone_cont,          # 電話番号部分一致
+      :business_hours_cont, # 営業時間部分一致
+      :s                    # ソート条件
+    )
+  end
 end

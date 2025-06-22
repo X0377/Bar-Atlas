@@ -1,65 +1,89 @@
-<div class="mb-8">
-  <%= form_with url: bars_path, method: :get, local: true do |f| %>
-    <%= f.text_field :search,
-        placeholder: "バーを検索...",
+<%= search_form_for @q, url: bars_path, method: :get, local: true, html: { id: 'unified-search-form' } do |f| %>
+  <div class="mb-8">
+    <%= f.text_field :name_cont,
+        placeholder: "キーワードでバーを検索",
         class: "search-input",
-        value: params[:search] %>
+        value: params.dig(:q, :name_cont) %>
+  </div>
+  <div class="mb-6">
+    <div class="sidebar-section-title">エリア</div>
+    <div class="mb-3">
+      <%= f.text_field :address_cont,
+          placeholder: "エリアを入力...",
+          class: "search-input",
+          value: params.dig(:q, :address_cont) %>
+    </div>
+    <div class="filter-options-container">
+      <% %w[新宿 六本木 恵比寿 渋谷].each do |area| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :address_cont) == area %>"
+             onclick="setFilterValue('address_cont', '<%= area %>')">
+          <span class="filter-option-label"><%= area %></span>
+          <span class="filter-option-count"><%= Bar.where('address ILIKE ?', "%#{area}%").count %></span>
+        </div>
+      <% end %>
+      <% if params.dig(:q, :address_cont).present? %>
+        <div class="filter-option" onclick="clearFilterValue('address_cont')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <!-- 価格帯、後で実装 -->
+  <div class="mb-6">
+    <div class="sidebar-section-title">価格帯</div>
+    <div class="filter-options-container">
+      <% [
+        { value: 'リーズナブル', label: 'リーズナブル' },
+        { value: '標準', label: '標準' },
+        { value: '高級', label: '高級' }
+      ].each do |option| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :price_range_eq) == option[:value] %>"
+             onclick="setFilterValue('price_range_eq', '<%= option[:value] %>')">
+          <span class="text-lg"><%= option[:emoji] %></span>
+          <span class="filter-option-label"><%= option[:label] %></span>
+          <span class="filter-option-count"><%= Bar.where(price_range: option[:value]).count %></span>
+        </div>
+      <% end %>
+      <% if params.dig(:q, :price_range_eq).present? %>
+        <div class="filter-option" onclick="clearFilterValue('price_range_eq')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+    <%= f.hidden_field :price_range_eq, value: params.dig(:q, :price_range_eq) %>
+  </div>
+  <div class="mb-6">
+    <div class="sidebar-section-title">喫煙状況</div>
+    <div class="filter-options-container">
+      <% [
+        { value: '禁煙', emoji: '🚭', label: '禁煙' },
+        { value: '喫煙可', emoji: '🚬', label: '喫煙可' }
+      ].each do |option| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :smoking_status_eq) == option[:value] %>"
+             onclick="setFilterValue('smoking_status_eq', '<%= option[:value] %>')">
+          <span class="text-lg"><%= option[:emoji] %></span>
+          <span class="filter-option-label"><%= option[:label] %></span>
+          <span class="filter-option-count"><%= Bar.where(smoking_status: option[:value]).count %></span>
+        </div>
+      <% end %>
+      <% if params.dig(:q, :smoking_status_eq).present? %>
+        <div class="filter-option" onclick="clearFilterValue('smoking_status_eq')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+    <%= f.hidden_field :smoking_status_eq, value: params.dig(:q, :smoking_status_eq) %>
+  </div>
+  <!-- 全条件クリア、後で実装 -->
+  <% if search_performed? %>
+    <div class="mb-6">
+      <div class="filter-option" onclick="clearAllFiltersUnified()" style="justify-content: center; background-color: var(--wine); color: white;">
+        <span class="text-lg">🔄</span>
+        <span class="filter-option-label">すべての条件をクリア</span>
+      </div>
+    </div>
   <% end %>
-</div>
-<div class="mb-6">
-  <div class="sidebar-section-title">お酒の種類</div>
-  <div class="filter-options-container">
-    <div class="filter-option active">
-      <span class="text-lg">🍸</span>
-      <span class="filter-option-label">カクテル</span>
-      <span class="filter-option-count">52</span>
-    </div>
-    <div class="filter-option">
-      <span class="text-lg">🥃</span>
-      <span class="filter-option-label">ウイスキー</span>
-      <span class="filter-option-count">38</span>
-    </div>
-    <div class="filter-option">
-      <span class="text-lg">🍷</span>
-      <span class="filter-option-label">ワイン</span>
-      <span class="filter-option-count">29</span>
-    </div>
-    <div class="filter-option">
-      <span class="text-lg">🍶</span>
-      <span class="filter-option-label">日本酒</span>
-      <span class="filter-option-count">15</span>
-    </div>
-  </div>
-</div>
-<div class="mb-6">
-  <div class="sidebar-section-title">予算範囲</div>
-  <div class="px-2">
-    <input type="range" min="1000" max="15000" value="5000" class="range-slider">
-    <div class="flex justify-between text-xs text-gray-600 mt-2">
-      <span>¥1,000</span>
-      <span class="font-bold" style="color: var(--wine)">¥5,000</span>
-      <span>¥15,000</span>
-    </div>
-  </div>
-</div>
-<div class="mb-6">
-  <div class="sidebar-section-title">エリア</div>
-  <div class="filter-options-container">
-    <div class="filter-option">
-      <span class="filter-option-label">新宿</span>
-      <span class="filter-option-count">25</span>
-    </div>
-    <div class="filter-option">
-      <span class="filter-option-label">六本木</span>
-      <span class="filter-option-count">32</span>
-    </div>
-    <div class="filter-option">
-      <span class="filter-option-label">恵比寿</span>
-      <span class="filter-option-count">28</span>
-    </div>
-    <div class="filter-option">
-      <span class="filter-option-label">渋谷</span>
-      <span class="filter-option-count">19</span>
-    </div>
-  </div>
-</div>
+<% end %>

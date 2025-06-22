@@ -1,4 +1,3 @@
-<!-- app/views/bars/index.html.erb -->
 <div class="section-header">
   <h2 class="section-title">おすすめ</h2>
   <div class="controls-container">
@@ -23,3 +22,34 @@
     <%= render bar %>
   <% end %>
 </div>
+<% if search_performed? %>
+  <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+    <div class="flex flex-wrap gap-2 items-center">
+      <span class="text-sm font-medium text-blue-800">現在の検索条件:</span>
+      <% if params.dig(:q, :name_cont).present? %>
+        <span class="bg-white px-3 py-1 rounded-full text-sm border">
+          📝 "<%= params.dig(:q, :name_cont) %>"
+          <button onclick="clearFilter('name_cont')" class="ml-2 text-gray-500 hover:text-red-500">×</button>
+        </span>
+      <% end %>
+      <% if params.dig(:q, :address_cont).present? %>
+        <span class="bg-white px-3 py-1 rounded-full text-sm border">
+          📍 <%= params.dig(:q, :address_cont) %>
+          <button onclick="clearFilter('address_cont')" class="ml-2 text-gray-500 hover:text-red-500">×</button>
+        </span>
+      <% end %>
+      <% if params.dig(:q, :price_range_eq).present? %>
+        <span class="bg-white px-3 py-1 rounded-full text-sm border">
+          💰 <%= params.dig(:q, :price_range_eq) %>
+          <button onclick="clearFilter('price_range_eq')" class="ml-2 text-gray-500 hover:text-red-500">×</button>
+        </span>
+      <% end %>
+      <% if params.dig(:q, :smoking_status_eq).present? %>
+        <span class="bg-white px-3 py-1 rounded-full text-sm border">
+          🚭 <%= params.dig(:q, :smoking_status_eq) %>
+          <button onclick="clearFilter('smoking_status_eq')" class="ml-2 text-gray-500 hover:text-red-500">×</button>
+        </span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
