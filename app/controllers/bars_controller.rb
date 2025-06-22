@@ -2,9 +2,24 @@ class BarsController < ApplicationController
   before_action :set_bar, only: %i[show]
 
   def index
-    @q = Bar.ransack(search_params)
+    Rails.logger.info "=== Search Debug ==="
+    Rails.logger.info "Original params: #{params[:q]}"
+
+    keyword_search = params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
+    other_params = params.fetch(:q, {}).except(:name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
+                        .reject { |key, value| value.blank? }
+
+    Rails.logger.info "Keyword search: #{keyword_search}"
+    Rails.logger.info "Other params: #{other_params}"
+
+    @q = Bar.ransack(other_params)
     @bars = @q.result.includes(:specialties)
 
+    if keyword_search.present?
+      @bars = @bars.search_by_keywords(keyword_search)
+    end
+
+    @bars = @bars.distinct
     @bars = apply_sorting(@bars)
 
     if helpers.search_performed?
@@ -13,8 +28,12 @@ class BarsController < ApplicationController
       @bars = @bars.limit(12)
     end
 
-    @total_count = @q.result.count if helpers.search_performed?
+    @total_count = @bars.count
+
+    Rails.logger.info "Final result count: #{@total_count}"
+    Rails.logger.info "========================"
   end
+
 
   def show
     @bar = Bar.find(params[:id])
@@ -42,19 +61,6 @@ class BarsController < ApplicationController
     params.require(:bar).permit(
       :name, :address, :price_range, :smoking_status,
       :description, :phone, :business_hours, :image_url
-    )
-  end
-
-  def search_params
-    params.fetch(:q, {}).permit(
-      :name_cont,           # バー名部分一致
-      :address_cont,        # 住所部分一致
-      :price_range_eq,      # 価格帯完全一致
-      :smoking_status_eq,   # 喫煙状況完全一致
-      :description_cont,    # 説明部分一致
-      :phone_cont,          # 電話番号部分一致
-      :business_hours_cont, # 営業時間部分一致
-      :s                    # ソート条件
     )
   end
 end

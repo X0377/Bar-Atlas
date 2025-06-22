@@ -10,16 +10,35 @@ class SearchFilters {
       return;
     }
 
-    const textInputs = this.form.querySelectorAll('input[type="text"]');
-    textInputs.forEach((input) => {
+    const keywordInput = this.form.querySelector(
+      'input[name="q[name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont]"]'
+    );
+
+    if (keywordInput) {
       let timeout;
-      input.addEventListener("input", (e) => {
+      keywordInput.addEventListener("input", (e) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
+          console.log("Keyword search triggered:", e.target.value);
           this.submitForm();
         }, 500);
       });
-    });
+      console.log("Keyword input listener attached");
+    } else {
+      console.warn("Keyword input field not found!");
+    }
+
+    const areaInput = this.form.querySelector('input[name="q[address_cont]"]');
+    if (areaInput) {
+      let timeout;
+      areaInput.addEventListener("input", (e) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          console.log("Area search triggered:", e.target.value);
+          this.submitForm();
+        }, 500);
+      });
+    }
   }
 
   setFilterValue(fieldName, value) {
@@ -33,8 +52,9 @@ class SearchFilters {
 
     const currentValue = hiddenField.value;
     const newValue = currentValue === value ? "" : value;
-
     hiddenField.value = newValue;
+
+    console.log(`Filter ${fieldName} set to:`, newValue);
     this.submitForm();
   }
 
@@ -48,6 +68,7 @@ class SearchFilters {
     }
 
     hiddenField.value = "";
+    console.log(`Filter ${fieldName} cleared`);
     this.submitForm();
   }
 
@@ -61,16 +82,16 @@ class SearchFilters {
       }
     });
 
+    console.log("All filters cleared");
     this.submitForm();
   }
 
   submitForm() {
     if (this.form) {
-      console.log(
-        "Submitting form with conditions:",
-        this.getCurrentConditions()
-      );
-      this.form.submit();
+      console.log("=== Form Submission ===");
+      console.log("Current conditions:", this.getCurrentConditions());
+
+      this.form.requestSubmit();
     }
   }
 
@@ -87,69 +108,56 @@ class SearchFilters {
   }
 }
 
-let searchFilters;
+function initializeSearchFilters() {
+  if (window.searchFilters) {
+    console.log("Reinitializing search filters...");
+  }
+
+  window.searchFilters = new SearchFilters();
+  console.log("Search filters initialized");
+
+  if (window.searchFilters.form) {
+    console.log(
+      "Form found, current conditions:",
+      window.searchFilters.getCurrentConditions()
+    );
+  } else {
+    console.warn("Form not found! Check if unified-search-form exists");
+  }
+}
 
 window.setFilterValue = (fieldName, value) => {
-  if (searchFilters) {
-    searchFilters.setFilterValue(fieldName, value);
+  if (window.searchFilters) {
+    window.searchFilters.setFilterValue(fieldName, value);
+  } else {
+    console.warn("searchFilters not initialized");
   }
 };
 
 window.clearFilterValue = (fieldName) => {
-  if (searchFilters) {
-    searchFilters.clearFilterValue(fieldName);
+  if (window.searchFilters) {
+    window.searchFilters.clearFilterValue(fieldName);
   }
 };
 
 window.clearAllFiltersUnified = () => {
-  if (searchFilters) {
-    searchFilters.clearAllFilters();
+  if (window.searchFilters) {
+    window.searchFilters.clearAllFilters();
   }
 };
 
-window.filterByPrice = (price) => {
-  if (searchFilters) {
-    searchFilters.setFilterValue("price_range_eq", price);
-  }
-};
+// エイリアス関数（既存のHTMLから呼ばれる可能性があるため）
+window.filterByPrice = (price) =>
+  window.setFilterValue("price_range_eq", price);
+window.filterBySmoking = (smoking) =>
+  window.setFilterValue("smoking_status_eq", smoking);
+window.filterByArea = (area) => window.setFilterValue("address_cont", area);
+window.clearFilter = (filterKey) => window.clearFilterValue(filterKey);
+window.clearAllFilters = () => window.clearAllFiltersUnified();
 
-window.filterBySmoking = (smoking) => {
-  if (searchFilters) {
-    searchFilters.setFilterValue("smoking_status_eq", smoking);
-  }
-};
+// イベントリスナー
+document.addEventListener("DOMContentLoaded", initializeSearchFilters);
+document.addEventListener("turbo:load", initializeSearchFilters);
+document.addEventListener("turbo:frame-load", initializeSearchFilters);
 
-window.filterByArea = (area) => {
-  if (searchFilters) {
-    searchFilters.setFilterValue("address_cont", area);
-  }
-};
-
-window.clearFilter = (filterKey) => {
-  if (searchFilters) {
-    searchFilters.clearFilterValue(filterKey);
-  }
-};
-
-window.clearAllFilters = () => {
-  if (searchFilters) {
-    searchFilters.clearAllFilters();
-  }
-};
-
-document.addEventListener("DOMContentLoaded", () => {
-  searchFilters = new SearchFilters(); // ← 正しいクラス名
-  console.log("Search filters initialized");
-
-  // デバッグ：現在の検索条件を確認
-  if (searchFilters.form) {
-    console.log(
-      "Form found, current conditions:",
-      searchFilters.getCurrentConditions()
-    );
-  } else {
-    console.warn(
-      "Form not found! Check if the form has id 'unified-search-form'"
-    );
-  }
-});
+console.log("Search filters script loaded");

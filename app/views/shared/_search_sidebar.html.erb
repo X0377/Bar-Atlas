@@ -1,10 +1,13 @@
 <%= search_form_for @q, url: bars_path, method: :get, local: true, html: { id: 'unified-search-form' } do |f| %>
+  <!-- キーワード検索 -->
+  <!-- 入力後フォーム入力から強制的に離されてしまう問題あり -->
   <div class="mb-8">
-    <%= f.text_field :name_cont,
-        placeholder: "キーワードでバーを検索",
+    <%= f.text_field :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont,
+        placeholder: "キーワードでバーを検索...",
         class: "search-input",
-        value: params.dig(:q, :name_cont) %>
+        value: params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont) %>
   </div>
+  <!-- エリア検索 -->
   <div class="mb-6">
     <div class="sidebar-section-title">エリア</div>
     <div class="mb-3">
@@ -29,14 +32,14 @@
       <% end %>
     </div>
   </div>
-  <!-- 価格帯、後で実装 -->
+  <!-- 価格帯フィルター -->
   <div class="mb-6">
     <div class="sidebar-section-title">価格帯</div>
     <div class="filter-options-container">
       <% [
-        { value: 'リーズナブル', label: 'リーズナブル' },
-        { value: '標準', label: '標準' },
-        { value: '高級', label: '高級' }
+        { value: 'リーズナブル', emoji: '💰', label: 'リーズナブル' },
+        { value: '標準', emoji: '💵', label: '標準' },
+        { value: '高級', emoji: '💎', label: '高級' }
       ].each do |option| %>
         <div class="filter-option <%= 'active' if params.dig(:q, :price_range_eq) == option[:value] %>"
              onclick="setFilterValue('price_range_eq', '<%= option[:value] %>')">
@@ -54,11 +57,13 @@
     </div>
     <%= f.hidden_field :price_range_eq, value: params.dig(:q, :price_range_eq) %>
   </div>
+  <!-- 喫煙状況フィルター -->
   <div class="mb-6">
     <div class="sidebar-section-title">喫煙状況</div>
     <div class="filter-options-container">
       <% [
         { value: '禁煙', emoji: '🚭', label: '禁煙' },
+        { value: '分煙', emoji: '🚫', label: '分煙' },
         { value: '喫煙可', emoji: '🚬', label: '喫煙可' }
       ].each do |option| %>
         <div class="filter-option <%= 'active' if params.dig(:q, :smoking_status_eq) == option[:value] %>"
@@ -77,7 +82,7 @@
     </div>
     <%= f.hidden_field :smoking_status_eq, value: params.dig(:q, :smoking_status_eq) %>
   </div>
-  <!-- 全条件クリア、後で実装 -->
+  <!-- 全条件クリア -->
   <% if search_performed? %>
     <div class="mb-6">
       <div class="filter-option" onclick="clearAllFiltersUnified()" style="justify-content: center; background-color: var(--wine); color: white;">
