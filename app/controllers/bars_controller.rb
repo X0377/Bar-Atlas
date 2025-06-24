@@ -59,10 +59,10 @@ class BarsController < ApplicationController
     area_counts = Bar.where(
       areas.map { |area| "address ILIKE ?" }.join(' OR '),
       *areas.map { |area| "%#{area}%" }
-    ).group("CASE #{areas.map.with_index { |area, i| 
-      "WHEN address ILIKE '%#{area}%' THEN '#{area}'" 
+    ).group("CASE #{areas.map.with_index { |area, i|
+      "WHEN address ILIKE '%#{area}%' THEN '#{area}'"
     }.join(' ')} END").count
-    
+
     {
       area: areas.map { |area| [area, area_counts[area] || 0] }.to_h,
       price_category: {
