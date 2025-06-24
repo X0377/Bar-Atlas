@@ -60,4 +60,5 @@ group :development do
   # Uncomment for performance profiling
   # gem "rack-mini-profiler"
   # gem "spring"
+  gem "httparty"
 end
