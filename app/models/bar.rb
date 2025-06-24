@@ -1,7 +1,6 @@
 class Bar < ApplicationRecord
   has_many :specialties, dependent: :destroy
 
-  # セキュリティ対策のためRansackで検索可能な属性を明示的に許可
   def self.ransackable_attributes(auth_object = nil)
     [
       "address",
@@ -17,6 +16,7 @@ class Bar < ApplicationRecord
       "price_range",
       "smoking_status",
       "updated_at",
+      "price_category",
       "name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont"
     ]
   end
@@ -42,7 +42,16 @@ class Bar < ApplicationRecord
     })
   end
 
-    scope :search_by_keywords, ->(keywords_string) {
+  ransacker :price_category do
+    Arel.sql("CASE
+      WHEN bars.price_range LIKE '%¥5,000-8,000%' OR bars.price_range LIKE '%¥6,000-10,000%' THEN 'luxury'
+      WHEN bars.price_range LIKE '%¥3,000-5,000%' OR bars.price_range LIKE '%¥4,000-7,000%' THEN 'standard'
+      WHEN bars.price_range LIKE '%¥2,000-4,000%' OR bars.price_range LIKE '%¥2,500-4,500%' THEN 'reasonable'
+      ELSE 'unknown'
+    END")
+  end
+
+  scope :search_by_keywords, ->(keywords_string) {
     return all if keywords_string.blank?
 
     keywords = keywords_string.gsub(/[　\s]+/, ' ').strip.split(' ')

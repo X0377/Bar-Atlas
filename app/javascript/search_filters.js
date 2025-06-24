@@ -1,12 +1,15 @@
 class SearchFilters {
   constructor() {
     this.form = document.getElementById("unified-search-form");
+    this.debug = document.body.dataset.railsEnv === "development";
     this.initializeEventListeners();
   }
 
   initializeEventListeners() {
     if (!this.form) {
-      console.warn("Form with id 'unified-search-form' not found");
+      if (this.debug) {
+        console.warn("Form with id 'unified-search-form' not found");
+      }
       return;
     }
 
@@ -19,13 +22,19 @@ class SearchFilters {
       keywordInput.addEventListener("input", (e) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-          console.log("Keyword search triggered:", e.target.value);
+          if (this.debug) {
+            console.log("Keyword search triggered:", e.target.value);
+          }
           this.submitForm();
-        }, 500);
+        }, 300);
       });
-      console.log("Keyword input listener attached");
+      if (this.debug) {
+        console.log("Keyword input listener attached");
+      }
     } else {
-      console.warn("Keyword input field not found!");
+      if (this.debug) {
+        console.warn("Keyword input field not found!");
+      }
     }
 
     const areaInput = this.form.querySelector('input[name="q[address_cont]"]');
@@ -34,9 +43,11 @@ class SearchFilters {
       areaInput.addEventListener("input", (e) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-          console.log("Area search triggered:", e.target.value);
+          if (this.debug) {
+            console.log("Area search triggered:", e.target.value);
+          }
           this.submitForm();
-        }, 500);
+        }, 300);
       });
     }
   }
@@ -46,7 +57,9 @@ class SearchFilters {
       `input[name="q[${fieldName}]"]`
     );
     if (!hiddenField) {
-      console.warn(`Hidden field q[${fieldName}] not found`);
+      if (this.debug) {
+        console.warn(`Hidden field q[${fieldName}] not found`);
+      }
       return;
     }
 
@@ -54,7 +67,9 @@ class SearchFilters {
     const newValue = currentValue === value ? "" : value;
     hiddenField.value = newValue;
 
-    console.log(`Filter ${fieldName} set to:`, newValue);
+    if (this.debug) {
+      console.log(`Filter ${fieldName} set to:`, newValue);
+    }
     this.submitForm();
   }
 
@@ -63,12 +78,16 @@ class SearchFilters {
       `input[name="q[${fieldName}]"]`
     );
     if (!hiddenField) {
-      console.warn(`Hidden field q[${fieldName}] not found`);
+      if (this.debug) {
+        console.warn(`Hidden field q[${fieldName}] not found`);
+      }
       return;
     }
 
     hiddenField.value = "";
-    console.log(`Filter ${fieldName} cleared`);
+    if (this.debug) {
+      console.log(`Filter ${fieldName} cleared`);
+    }
     this.submitForm();
   }
 
@@ -82,20 +101,23 @@ class SearchFilters {
       }
     });
 
-    console.log("All filters cleared");
+    if (this.debug) {
+      console.log("All filters cleared");
+    }
     this.submitForm();
   }
 
   submitForm() {
     if (this.form) {
-      console.log("=== Form Submission ===");
-      console.log("Current conditions:", this.getCurrentConditions());
+      if (this.debug) {
+        console.log("=== Form Submission ===");
+        console.log("Current conditions:", this.getCurrentConditions());
+      }
 
       this.form.requestSubmit();
     }
   }
 
-  // デバッグ用
   getCurrentConditions() {
     const formData = new FormData(this.form);
     const conditions = {};
@@ -110,19 +132,27 @@ class SearchFilters {
 
 function initializeSearchFilters() {
   if (window.searchFilters) {
-    console.log("Reinitializing search filters...");
+    if (window.searchFilters.debug) {
+      console.log("Reinitializing search filters...");
+    }
   }
 
   window.searchFilters = new SearchFilters();
-  console.log("Search filters initialized");
+  if (window.searchFilters.debug) {
+    console.log("Search filters initialized");
+  }
 
   if (window.searchFilters.form) {
-    console.log(
-      "Form found, current conditions:",
-      window.searchFilters.getCurrentConditions()
-    );
+    if (window.searchFilters.debug) {
+      console.log(
+        "Form found, current conditions:",
+        window.searchFilters.getCurrentConditions()
+      );
+    }
   } else {
-    console.warn("Form not found! Check if unified-search-form exists");
+    if (window.searchFilters.debug) {
+      console.warn("Form not found! Check if unified-search-form exists");
+    }
   }
 }
 
@@ -130,7 +160,9 @@ window.setFilterValue = (fieldName, value) => {
   if (window.searchFilters) {
     window.searchFilters.setFilterValue(fieldName, value);
   } else {
-    console.warn("searchFilters not initialized");
+    if (window.searchFilters && window.searchFilters.debug) {
+      console.warn("searchFilters not initialized");
+    }
   }
 };
 
@@ -146,7 +178,6 @@ window.clearAllFiltersUnified = () => {
   }
 };
 
-// エイリアス関数（既存のHTMLから呼ばれる可能性があるため）
 window.filterByPrice = (price) =>
   window.setFilterValue("price_range_eq", price);
 window.filterBySmoking = (smoking) =>
@@ -155,9 +186,10 @@ window.filterByArea = (area) => window.setFilterValue("address_cont", area);
 window.clearFilter = (filterKey) => window.clearFilterValue(filterKey);
 window.clearAllFilters = () => window.clearAllFiltersUnified();
 
-// イベントリスナー
 document.addEventListener("DOMContentLoaded", initializeSearchFilters);
 document.addEventListener("turbo:load", initializeSearchFilters);
 document.addEventListener("turbo:frame-load", initializeSearchFilters);
 
-console.log("Search filters script loaded");
+if (document.body.dataset.railsEnv === "development") {
+  console.log("Search filters script loaded");
+}
