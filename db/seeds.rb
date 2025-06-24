@@ -1,5 +1,7 @@
-Bar.destroy_all
-Specialty.destroy_all
+unless Rails.env.production?
+  Bar.destroy_all
+  Specialty.destroy_all
+end
 
 bars_data = [
   {

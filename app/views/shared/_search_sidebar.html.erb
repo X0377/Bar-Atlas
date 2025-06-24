@@ -1,6 +1,5 @@
 <%= search_form_for @q, url: bars_path, method: :get, local: true, html: { id: 'unified-search-form' } do |f| %>
-  <!-- キーワード検索 -->
-  <!-- 入力後フォーム入力から強制的に離されてしまう問題あり -->
+  <!-- TODO: 入力後フォーム入力から強制的に離されてしまう問題あり -->
   <div class="mb-8">
     <%= f.text_field :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont,
         placeholder: "キーワードでバーを検索...",
@@ -21,7 +20,7 @@
         <div class="filter-option <%= 'active' if params.dig(:q, :address_cont) == area %>"
              onclick="setFilterValue('address_cont', '<%= area %>')">
           <span class="filter-option-label"><%= area %></span>
-          <span class="filter-option-count"><%= Bar.where('address ILIKE ?', "%#{area}%").count %></span>
+          <span class="filter-option-count"><%= @filter_counts&.dig(:area, area) || 0 %></span>
         </div>
       <% end %>
       <% if params.dig(:q, :address_cont).present? %>
@@ -37,10 +36,10 @@
     <div class="sidebar-section-title">価格帯</div>
     <div class="filter-options-container">
       <% [
-        { value: 'リーズナブル', emoji: '💰', label: 'リーズナブル' },
-        { value: '標準', emoji: '💵', label: '標準' },
-        { value: '高級', emoji: '💎', label: '高級' }
-      ].each do |option| %>
+        { value: '¥2,000-4,000', emoji: '💰', label: 'リーズナブル' },
+        { value: '¥3,000-5,000', emoji: '💵', label: '標準' },
+        { value: '¥5,000-8,000', emoji: '💎', label: '高級' }
+        ].each do |option| %>
         <div class="filter-option <%= 'active' if params.dig(:q, :price_range_eq) == option[:value] %>"
              onclick="setFilterValue('price_range_eq', '<%= option[:value] %>')">
           <span class="text-lg"><%= option[:emoji] %></span>

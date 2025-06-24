@@ -2,15 +2,9 @@ class BarsController < ApplicationController
   before_action :set_bar, only: %i[show]
 
   def index
-    Rails.logger.info "=== Search Debug ==="
-    Rails.logger.info "Original params: #{params[:q]}"
-
     keyword_search = params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
     other_params = params.fetch(:q, {}).except(:name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
                         .reject { |key, value| value.blank? }
-
-    Rails.logger.info "Keyword search: #{keyword_search}"
-    Rails.logger.info "Other params: #{other_params}"
 
     @q = Bar.ransack(other_params)
     @bars = @q.result.includes(:specialties)
@@ -30,8 +24,7 @@ class BarsController < ApplicationController
 
     @total_count = @bars.count
 
-    Rails.logger.info "Final result count: #{@total_count}"
-    Rails.logger.info "========================"
+    @filter_counts = calculate_filter_counts
   end
 
 
@@ -62,5 +55,15 @@ class BarsController < ApplicationController
       :name, :address, :price_range, :smoking_status,
       :description, :phone, :business_hours, :image_url
     )
+  end
+
+  def calculate_filter_counts
+    {
+      area: %w[新宿 六本木 恵比寿 渋谷].map { |area|
+        [area, Bar.where('address ILIKE ?', "%#{area}%").count]
+      }.to_h,
+      price_range: Bar.group(:price_range).count,
+      smoking_status: Bar.group(:smoking_status).count
+    }
   end
 end

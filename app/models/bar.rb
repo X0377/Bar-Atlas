@@ -16,7 +16,8 @@ class Bar < ApplicationRecord
       "phone",
       "price_range",
       "smoking_status",
-      "updated_at"
+      "updated_at",
+      "name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont"
     ]
   end
 
