@@ -12,6 +12,10 @@
   }
 }
 
+.hidden {
+  display: none !important;
+}
+
 @layer components {
   .app-header {
     background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);

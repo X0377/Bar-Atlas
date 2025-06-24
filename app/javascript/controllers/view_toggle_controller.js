@@ -17,15 +17,51 @@ export default class extends Controller {
   connect() {
     console.log("🎯 View toggle controller connected");
 
+    // 強制的に初期状態をリセット
+    this.forceInitialState();
+
     // Load preferred view from localStorage
     const savedView = localStorage.getItem("preferred-view") || "list";
     console.log("📋 Saved view preference:", savedView);
 
     this.preferredViewValue = savedView;
-    this.toggleView(savedView);
+
+    // 少し遅延させて確実に適用
+    setTimeout(() => {
+      this.toggleView(savedView);
+    }, 100);
 
     // Set sort select value if exists
     this.updateSortSelect();
+  }
+
+  forceInitialState() {
+    console.log("🔄 Forcing initial state");
+
+    // リスト表示を強制表示
+    if (this.hasListViewTarget) {
+      this.listViewTarget.classList.remove("hidden", "view-hidden");
+      this.listViewTarget.classList.add("view-visible");
+      this.listViewTarget.style.display = "block";
+    }
+
+    // 地図表示を強制非表示
+    if (this.hasMapViewTarget) {
+      this.mapViewTarget.classList.add("hidden", "view-hidden");
+      this.mapViewTarget.classList.remove("view-visible");
+      this.mapViewTarget.style.display = "none";
+    }
+
+    // ボタン状態をリセット
+    if (this.hasListButtonTarget) {
+      this.listButtonTarget.classList.add("active");
+    }
+
+    if (this.hasMapButtonTarget) {
+      this.mapButtonTarget.classList.remove("active");
+    }
+
+    console.log("✅ Initial state forced");
   }
 
   get debug() {
@@ -50,14 +86,18 @@ export default class extends Controller {
   showListView() {
     console.log("📋 Showing list view");
 
-    // Update visibility
+    // 強制的にクラスを設定
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.remove("hidden");
+      this.listViewTarget.classList.remove("hidden", "view-hidden");
+      this.listViewTarget.classList.add("view-visible");
+      this.listViewTarget.style.display = "block";
       console.log("✅ List view shown");
     }
 
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.add("hidden");
+      this.mapViewTarget.classList.add("hidden", "view-hidden");
+      this.mapViewTarget.classList.remove("view-visible");
+      this.mapViewTarget.style.display = "none";
       console.log("✅ Map view hidden");
     }
 
@@ -74,14 +114,18 @@ export default class extends Controller {
   showMapView() {
     console.log("🗺️ Showing map view");
 
-    // Update visibility
+    // 強制的にクラスを設定
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.remove("hidden");
+      this.mapViewTarget.classList.remove("hidden", "view-hidden");
+      this.mapViewTarget.classList.add("view-visible");
+      this.mapViewTarget.style.display = "block";
       console.log("✅ Map view shown");
     }
 
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.add("hidden");
+      this.listViewTarget.classList.add("hidden", "view-hidden");
+      this.listViewTarget.classList.remove("view-visible");
+      this.listViewTarget.style.display = "none";
       console.log("✅ List view hidden");
     }
 
