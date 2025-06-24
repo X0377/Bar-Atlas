@@ -1,0 +1,90 @@
+<%= search_form_for @q, url: bars_path, method: :get, local: true, html: { id: 'unified-search-form' } do |f| %>
+  <div class="mb-8">
+    <%= f.text_field :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont,
+        placeholder: "キーワードでバーを検索...",
+        class: "search-input",
+        value: params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont) %>
+  </div>
+  <div class="mb-6">
+    <div class="sidebar-section-title">エリア</div>
+    <div class="mb-3">
+      <%= f.text_field :address_cont,
+          placeholder: "エリアを入力...",
+          class: "search-input",
+          value: params.dig(:q, :address_cont) %>
+    </div>
+    <div class="filter-options-container">
+      <% %w[新宿 六本木 恵比寿 渋谷].each do |area| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :address_cont) == area %>"
+             onclick="setFilterValue('address_cont', '<%= area %>')">
+          <span class="filter-option-label"><%= area %></span>
+          <%# <span class="filter-option-count"><%= @filter_counts&.dig(:area, area) || 0 %> <!-- </span> %> -->
+        </div>
+      <% end %>
+      <% if params.dig(:q, :address_cont).present? %>
+        <div class="filter-option" onclick="clearFilterValue('address_cont')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="mb-6">
+    <div class="sidebar-section-title">価格帯</div>
+    <div class="filter-options-container">
+      <% [
+        { value: 'reasonable', label: 'リーズナブル', description: '¥1,500〜' },
+        { value: 'standard', label: '標準', description: '¥3,000〜8,000' },
+        { value: 'luxury', label: '高級', description: '¥8,000〜' }
+        ].each do |option| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :price_category_eq) == option[:value] %>"
+             onclick="setFilterValue('price_category_eq', '<%= option[:value] %>')">
+          <div class="flex-1">
+            <span class="filter-option-label"><%= option[:label] %></span>
+            <div class="text-xs text-gray-500"><%= option[:description] %></div>
+          </div>
+          <%# <span class="filter-option-count"><%= @filter_counts&.dig(:price_category, option[:value]) || 0 %> <!-- </span> %> -->
+        </div>
+      <% end %>
+      <% if params.dig(:q, :price_category_eq).present? %>
+        <div class="filter-option" onclick="clearFilterValue('price_category_eq')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+    <%= f.hidden_field :price_category_eq, value: params.dig(:q, :price_category_eq) %>
+  </div>
+  <div class="mb-6">
+    <div class="sidebar-section-title">喫煙状況</div>
+    <div class="filter-options-container">
+      <% [
+        { value: '禁煙', emoji: '🚭', label: '禁煙' },
+        { value: '分煙', emoji: '🚫', label: '分煙' },
+        { value: '喫煙可', emoji: '🚬', label: '喫煙可' }
+      ].each do |option| %>
+        <div class="filter-option <%= 'active' if params.dig(:q, :smoking_status_eq) == option[:value] %>"
+             onclick="setFilterValue('smoking_status_eq', '<%= option[:value] %>')">
+          <span class="text-lg"><%= option[:emoji] %></span>
+          <span class="filter-option-label"><%= option[:label] %></span>
+          <%# <span class="filter-option-count"><%= @filter_counts&.dig(:smoking_status, option[:value]) || 0 %> <!-- </span> %> -->
+        </div>
+      <% end %>
+      <% if params.dig(:q, :smoking_status_eq).present? %>
+        <div class="filter-option" onclick="clearFilterValue('smoking_status_eq')">
+          <span class="text-lg">🔄</span>
+          <span class="filter-option-label">すべて表示</span>
+        </div>
+      <% end %>
+    </div>
+    <%= f.hidden_field :smoking_status_eq, value: params.dig(:q, :smoking_status_eq) %>
+  </div>
+  <% if search_performed? %>
+    <div class="mb-6">
+      <div class="filter-option" onclick="clearAllFiltersUnified()" style="justify-content: center; background-color: var(--wine); color: white;">
+        <span class="text-lg">🔄</span>
+        <span class="filter-option-label">すべての条件をクリア</span>
+      </div>
+    </div>
+  <% end %>
+<% end %>
