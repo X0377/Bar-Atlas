@@ -1,4 +1,3 @@
-// app/javascript/controllers/view_toggle_controller.js
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
@@ -11,48 +10,42 @@ export default class extends Controller {
   ];
   static values = {
     currentView: String,
-    preferredView: String,
   };
 
   connect() {
     console.log("🎯 View toggle controller connected");
 
-    // 強制的に初期状態をリセット
+    // 強制的に初期状態リセット
     this.forceInitialState();
 
-    // Load preferred view from localStorage
-    const savedView = localStorage.getItem("preferred-view") || "list";
+    const savedView = this.getSavedViewPreference();
     console.log("📋 Saved view preference:", savedView);
 
-    this.preferredViewValue = savedView;
-
-    // 少し遅延させて確実に適用
+    // 遅延
     setTimeout(() => {
       this.toggleView(savedView);
     }, 100);
 
-    // Set sort select value if exists
     this.updateSortSelect();
   }
 
   forceInitialState() {
     console.log("🔄 Forcing initial state");
 
-    // リスト表示を強制表示
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.remove("hidden", "view-hidden");
+      this.listViewTarget.classList.remove("view-hidden");
       this.listViewTarget.classList.add("view-visible");
+      this.listViewTarget.classList.remove("hidden");
       this.listViewTarget.style.display = "block";
     }
 
-    // 地図表示を強制非表示
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.add("hidden", "view-hidden");
+      this.mapViewTarget.classList.add("view-hidden");
       this.mapViewTarget.classList.remove("view-visible");
+      this.mapViewTarget.classList.add("hidden");
       this.mapViewTarget.style.display = "none";
     }
 
-    // ボタン状態をリセット
     if (this.hasListButtonTarget) {
       this.listButtonTarget.classList.add("active");
     }
@@ -68,7 +61,15 @@ export default class extends Controller {
     return document.body.dataset.railsEnv === "development";
   }
 
-  // Toggle between list and map view
+  getSavedViewPreference() {
+    return localStorage.getItem("bar-atlas-preferred-view") || "list";
+  }
+
+  saveViewPreference(view) {
+    localStorage.setItem("bar-atlas-preferred-view", view);
+    console.log("💾 Saved preference:", view);
+  }
+
   toggleView(viewType = null) {
     const view = viewType || this.currentViewValue || "list";
     console.log("🔄 Toggling to view:", view);
@@ -80,28 +81,26 @@ export default class extends Controller {
     }
 
     this.currentViewValue = view;
-    this.savePreference(view);
+    this.saveViewPreference(view);
   }
 
   showListView() {
     console.log("📋 Showing list view");
 
-    // 強制的にクラスを設定
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.remove("hidden", "view-hidden");
-      this.listViewTarget.classList.add("view-visible");
+      this.listViewTarget.classList.remove("view-hidden", "hidden");
+      this.listViewTarget.classList.add("view-visible", "view-transition");
       this.listViewTarget.style.display = "block";
       console.log("✅ List view shown");
     }
 
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.add("hidden", "view-hidden");
+      this.mapViewTarget.classList.add("view-hidden", "hidden");
       this.mapViewTarget.classList.remove("view-visible");
       this.mapViewTarget.style.display = "none";
       console.log("✅ Map view hidden");
     }
 
-    // Update button states
     if (this.hasListButtonTarget) {
       this.listButtonTarget.classList.add("active");
     }
@@ -114,22 +113,20 @@ export default class extends Controller {
   showMapView() {
     console.log("🗺️ Showing map view");
 
-    // 強制的にクラスを設定
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.remove("hidden", "view-hidden");
-      this.mapViewTarget.classList.add("view-visible");
+      this.mapViewTarget.classList.remove("view-hidden", "hidden");
+      this.mapViewTarget.classList.add("view-visible", "view-transition");
       this.mapViewTarget.style.display = "block";
       console.log("✅ Map view shown");
     }
 
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.add("hidden", "view-hidden");
+      this.listViewTarget.classList.add("view-hidden", "hidden");
       this.listViewTarget.classList.remove("view-visible");
       this.listViewTarget.style.display = "none";
       console.log("✅ List view hidden");
     }
 
-    // Update button states
     if (this.hasMapButtonTarget) {
       this.mapButtonTarget.classList.add("active");
     }
@@ -138,7 +135,6 @@ export default class extends Controller {
       this.listButtonTarget.classList.remove("active");
     }
 
-    // Trigger map resize after transition
     this.resizeMap();
   }
 
@@ -151,10 +147,9 @@ export default class extends Controller {
         console.log("📐 Resizing map");
         mapController.googleMapsController.resizeMap();
       }
-    }, 100);
+    }, 300);
   }
 
-  // Action methods for button clicks
   showList() {
     console.log("🖱️ List button clicked");
     this.toggleView("list");
@@ -165,7 +160,6 @@ export default class extends Controller {
     this.toggleView("map");
   }
 
-  // Handle sort change
   handleSort(event) {
     const sortValue = event.target.value;
     console.log("🔄 Sort changed to:", sortValue);
@@ -174,15 +168,12 @@ export default class extends Controller {
     window.location.href = url.toString();
   }
 
-  // Show specific bar on map
   showBarOnMap(event) {
     const barName = event.params.barName;
     console.log("🎯 Showing bar on map:", barName);
 
-    // Switch to map view first
     this.toggleView("map");
 
-    // Wait for map to load, then show the bar
     setTimeout(() => {
       const mapController = document.querySelector(
         '[data-controller~="google-maps"]'
@@ -193,13 +184,6 @@ export default class extends Controller {
     }, 500);
   }
 
-  // Save preference to localStorage
-  savePreference(view) {
-    localStorage.setItem("preferred-view", view);
-    console.log("💾 Saved preference:", view);
-  }
-
-  // Update sort select value based on URL params
   updateSortSelect() {
     if (!this.hasSortSelectTarget) return;
 
@@ -211,7 +195,6 @@ export default class extends Controller {
     }
   }
 
-  // Handle Turbo navigation
   currentViewValueChanged() {
     console.log("🔄 Current view changed to:", this.currentViewValue);
   }

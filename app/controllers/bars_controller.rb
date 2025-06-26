@@ -1,4 +1,3 @@
-# app/controllers/bars_controller.rb
 class BarsController < ApplicationController
   before_action :set_bar, only: %i[show]
 
@@ -9,13 +8,13 @@ class BarsController < ApplicationController
 
     @q = Bar.ransack(other_params)
     @bars = @q.result.includes(:specialties)
-    
+
     if keyword_search.present?
       @bars = @bars.search_by_keywords(keyword_search)
     end
 
     @bars = apply_sorting(@bars)
-    
+
     @bars = @bars.distinct
 
     if helpers.search_performed?
@@ -25,7 +24,7 @@ class BarsController < ApplicationController
     end
 
     @total_count = @bars.count
-    
+
     # Google Maps用データを別途取得
     map_query_base = Bar.where.not(latitude: nil, longitude: nil)
 
@@ -39,7 +38,7 @@ class BarsController < ApplicationController
 
     @bars_for_map_count = map_query_base.count
 
-    @bars_for_map = map_query_base.select(:id, :name, :address, :phone, :business_hours, 
+    @bars_for_map = map_query_base.select(:id, :name, :address, :phone, :business_hours,
                                          :price_range, :latitude, :longitude, :smoking_status)
   end
 

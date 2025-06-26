@@ -12,8 +12,17 @@
   }
 }
 
-.hidden {
+.view-hidden {
   display: none !important;
+}
+
+.view-visible {
+  display: block !important;
+}
+
+/* ビュー切り替え用 */
+.view-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 @layer components {
@@ -44,6 +53,7 @@
   .main-content {
     @apply flex-1 p-6;
   }
+
   .section-header {
     @apply flex justify-between items-center mb-8;
   }
@@ -97,7 +107,7 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
   }
 
-  /* === バーカードヘッダー：画像対応用 === */
+  /* バーカードヘッダー画像対応 */
   .bar-card-header {
     background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
     background-size: cover;
@@ -164,6 +174,7 @@
     font-family: var(--font-primary);
     @apply bg-gray-100 text-slate-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-amber-100 transition-colors cursor-pointer;
   }
+
   .info-grid {
     @apply space-y-3;
   }
@@ -270,9 +281,38 @@
     border: 2px solid var(--wine);
     box-shadow: 0 2px 6px rgba(114, 47, 55, 0.25);
   }
+
+  /*  Google Maps関連 */
+  .map-container {
+    @apply w-full bg-gray-100 rounded-lg overflow-hidden shadow-sm;
+  }
+
+  .map-loading {
+    @apply flex items-center justify-center h-96 bg-gray-50;
+  }
+
+  .map-loading-spinner {
+    @apply animate-spin rounded-full h-12 w-12 border-b-2;
+    border-color: var(--wine);
+  }
+
+  /* Google Maps情報ウィンドウ用 */
+  .gm-style-iw {
+    font-family: var(--font-primary) !important;
+  }
+
+  .gm-style-iw-d {
+    overflow: visible !important;
+  }
+
+  /* マップマーカーホバー効果 */
+  .map-marker-hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
 }
 
-/* === レスポンシブ === */
+/* レスポンシブ */
 @media (max-width: 1023px) {
   .main-layout {
     @apply flex-col pt-16;
@@ -292,6 +332,11 @@
   .bar-grid {
     @apply grid-cols-1 gap-4;
   }
+
+  /* モバイル用マップ調整 */
+  .map-container {
+    @apply mx-0;
+  }
 }
 
 @media (max-width: 640px) {
@@ -309,5 +354,22 @@
 
   .header-title {
     @apply text-base;
+  }
+
+  /* モバイル用ビュー切り替えボタン */
+  .view-toggle {
+    @apply w-full;
+  }
+
+  .view-toggle-button {
+    @apply flex-1 justify-center;
+  }
+
+  .controls-container {
+    @apply flex-col gap-2 w-full;
+  }
+
+  .sort-select {
+    @apply w-full;
   }
 }
