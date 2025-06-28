@@ -3,7 +3,7 @@
 set -o errexit
 
 bundle install
-yarn install
+
 ./bin/rails tailwindcss:build
 ./bin/rails assets:precompile
 ./bin/rails db:migrate
