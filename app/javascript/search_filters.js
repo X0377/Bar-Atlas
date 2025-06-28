@@ -1,3 +1,11 @@
+// デバッグ用
+console.log("🔍 search_filters.js loading...");
+
+window.addEventListener("DOMContentLoaded", () => {
+  console.log("🔍 search_filters.js DOM ready");
+  console.log("🔍 setFilterValue available:", typeof window.setFilterValue);
+});
+
 class SearchFilters {
   constructor() {
     this.form = document.getElementById("unified-search-form");
