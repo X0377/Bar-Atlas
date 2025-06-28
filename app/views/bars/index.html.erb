@@ -20,10 +20,14 @@
       <select class="sort-select"
               data-view-toggle-target="sortSelect"
               data-action="change->view-toggle#handleSort">
-        <option value="created_at_desc" <%= 'selected' if params[:sort] == 'created_at_desc' %>>新着順</option>
-        <option value="name_asc" <%= 'selected' if params[:sort] == 'name_asc' %>>名前順</option>
-        <option value="price_asc" <%= 'selected' if params[:sort] == 'price_asc' %>>価格安い順</option>
-        <option value="price_desc" <%= 'selected' if params[:sort] == 'price_desc' %>>価格高い順</option>
+        <option value="created_at_desc" <%= 'selected' if params[:sort].blank? || params[:sort] == 'created_at_desc' %>>新着順</option>
+        <option value="name_asc" <%= 'selected' if params[:sort] == 'name_asc' %>>名前順 あ→ん</option>
+        <option value="price_min_asc" <%= 'selected' if params[:sort] == 'price_min_asc' || params[:sort] == 'price_asc' %>>💰 下限価格 安い順</option>
+        <option value="price_max_asc" <%= 'selected' if params[:sort] == 'price_max_asc' %>>💰 上限価格 安い順</option>
+        <option value="price_average_asc" <%= 'selected' if params[:sort] == 'price_average_asc' %>>💰 平均価格 安い順</option>
+        <option value="price_min_desc" <%= 'selected' if params[:sort] == 'price_min_desc' || params[:sort] == 'price_desc' %>>💎 下限価格 高い順</option>
+        <option value="price_max_desc" <%= 'selected' if params[:sort] == 'price_max_desc' %>>💎 上限価格 高い順</option>
+        <option value="price_average_desc" <%= 'selected' if params[:sort] == 'price_average_desc' %>>💎 平均価格 高い順</option>
       </select>
     </div>
   </div>

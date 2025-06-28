@@ -149,4 +149,74 @@ class Bar < ApplicationRecord
       sleep(0.1) # API制限回避
     end
   end
+
+  # 価格帯の下限と上限を数値として抽出するためのransacker
+  # 下限価格抽出（¥1,500-3,000 → 1500）
+  ransacker :price_min do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        ELSE CAST(
+          REGEXP_REPLACE(
+            SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+            '[^0-9]', '', 'g'
+          ) AS INTEGER
+        )
+      END
+    ")
+  end
+
+  # 上限価格抽出（¥1,500-3,000 → 3000）
+  ransacker :price_max do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        WHEN POSITION('-' IN bars.price_range) = 0 THEN
+          CAST(
+            REGEXP_REPLACE(
+              REPLACE(bars.price_range, '¥', ''),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        ELSE CAST(
+          REGEXP_REPLACE(
+            SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+            '[^0-9]', '', 'g'
+          ) AS INTEGER
+        )
+      END
+    ")
+  end
+
+  # 価格帯の平均値
+  ransacker :price_average do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        ELSE (
+          CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          ) +
+          CASE
+            WHEN POSITION('-' IN bars.price_range) = 0 THEN
+              CAST(
+                REGEXP_REPLACE(
+                  REPLACE(bars.price_range, '¥', ''),
+                  '[^0-9]', '', 'g'
+                ) AS INTEGER
+              )
+            ELSE CAST(
+              REGEXP_REPLACE(
+                SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          END
+        ) / 2
+      END
+    ")
+  end
 end
