@@ -12,7 +12,6 @@ gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
 gem "tailwindcss-rails", "~> 3.3.1"
-gem "sassc-rails"  # SCSS compiler
 gem 'kaminari'
 
 # Application features
