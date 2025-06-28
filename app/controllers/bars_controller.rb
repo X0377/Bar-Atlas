@@ -1,5 +1,6 @@
 class BarsController < ApplicationController
   before_action :set_bar, only: %i[show]
+
   def index
     keyword_search = params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
     other_params = params.fetch(:q, {}).except(:name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont)
@@ -7,21 +8,29 @@ class BarsController < ApplicationController
 
     @q = Bar.ransack(other_params)
     @bars = @q.result.includes(:specialties)
+
     if keyword_search.present?
       @bars = @bars.search_by_keywords(keyword_search)
     end
 
-    @bars = @bars.distinct
     @bars = apply_sorting(@bars)
 
-    if helpers.search_performed?
-      @bars = @bars.page(params[:page]).per(20)
-    else
-      @bars = @bars.limit(12)
-    end
+    @bars = @bars.group('bars.id')
+    @total_count = @bars.count.keys.size
 
-    @total_count = @bars.count
-    # @filter_counts = calculate_filter_counts
+    # ページネーション
+    @bars = @bars.page(params[:page]).per(20)
+
+    @bars_for_map_query = @q.result.includes(:specialties)
+
+    if keyword_search.present?
+      @bars_for_map_query = @bars_for_map_query.search_by_keywords(keyword_search)
+    end
+    @bars_for_map_query = @bars_for_map_query.where.not(latitude: nil, longitude: nil)
+
+    @bars_for_map_count = @bars_for_map_query.group('bars.id').count.size
+    @bars_for_map = @bars_for_map_query.group('bars.id').select(:id, :name, :address, :phone, :business_hours,
+                                                       :price_range, :latitude, :longitude, :smoking_status)
   end
 
   def show
@@ -37,11 +46,173 @@ class BarsController < ApplicationController
   def apply_sorting(relation)
     case params[:sort]
     when 'created_at_desc'
-      relation.order(created_at: :desc)
+      relation.order('bars.created_at DESC')
     when 'name_asc'
-      relation.order(:name)
+      relation.order('bars.name ASC')
+    when 'name_desc'
+      relation.order('bars.name DESC')
+
+    # 価格ソート
+    when 'price_min_asc'
+      # 下限価格が安い順
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) ASC, bars.id ASC
+      "))
+    when 'price_min_desc'
+      # 下限価格が高い順
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) DESC, bars.id ASC
+      "))
+    when 'price_max_asc'
+      # 上限価格が安い順
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          WHEN POSITION('-' IN bars.price_range) = 0 THEN
+            CAST(
+              REGEXP_REPLACE(
+                REPLACE(bars.price_range, '¥', ''),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) ASC, bars.id ASC
+      "))
+    when 'price_max_desc'
+      # 上限価格が高い順
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          WHEN POSITION('-' IN bars.price_range) = 0 THEN
+            CAST(
+              REGEXP_REPLACE(
+                REPLACE(bars.price_range, '¥', ''),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) DESC, bars.id ASC
+      "))
+    when 'price_average_asc'
+      # 平均価格が安い順
+      relation.order(Arel.sql("
+        MIN((
+          CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          ) +
+          CASE
+            WHEN POSITION('-' IN bars.price_range) = 0 THEN
+              CAST(
+                REGEXP_REPLACE(
+                  REPLACE(bars.price_range, '¥', ''),
+                  '[^0-9]', '', 'g'
+                ) AS INTEGER
+              )
+            ELSE CAST(
+              REGEXP_REPLACE(
+                SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          END
+        ) / 2) ASC, bars.id ASC
+      "))
+    when 'price_average_desc'
+      # 平均価格が高い順
+      relation.order(Arel.sql("
+        MIN((
+          CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          ) +
+          CASE
+            WHEN POSITION('-' IN bars.price_range) = 0 THEN
+              CAST(
+                REGEXP_REPLACE(
+                  REPLACE(bars.price_range, '¥', ''),
+                  '[^0-9]', '', 'g'
+                ) AS INTEGER
+              )
+            ELSE CAST(
+              REGEXP_REPLACE(
+                SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          END
+        ) / 2) DESC, bars.id ASC
+      "))
+    when 'price_asc'
+      # 既存の価格安い順 → 下限価格安い順にフォールバック
+      apply_sorting_with_param('price_min_asc', relation)
+    when 'price_desc'
+      # 既存の価格高い順 → 下限価格高い順にフォールバック  
+      apply_sorting_with_param('price_min_desc', relation)
     else
-      relation.order(created_at: :desc)
+      relation.order('bars.created_at DESC')
+    end
+  end
+
+  # ヘルパーメソッド（再帰を避けるため）
+  def apply_sorting_with_param(sort_type, relation)
+    case sort_type
+    when 'price_min_asc'
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) ASC, bars.id ASC
+      "))
+    when 'price_min_desc'
+      relation.order(Arel.sql("
+        MIN(CASE
+          WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+          ELSE CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        END) DESC, bars.id ASC
+      "))
+    else
+      relation
     end
   end
 
@@ -51,27 +222,4 @@ class BarsController < ApplicationController
       :description, :phone, :business_hours, :image_url
     )
   end
-
-# TODO: フィルター件数機能は後日実装
-=begin
-  def calculate_filter_counts
-    areas = %w[新宿 六本木 恵比寿 渋谷]
-    area_counts = Bar.where(
-      areas.map { |area| "address ILIKE ?" }.join(' OR '),
-      *areas.map { |area| "%#{area}%" }
-    ).group("CASE #{areas.map.with_index { |area, i|
-      "WHEN address ILIKE '%#{area}%' THEN '#{area}'"
-    }.join(' ')} END").count
-
-    {
-      area: areas.map { |area| [area, area_counts[area] || 0] }.to_h,
-      price_category: {
-        'reasonable' => Bar.where("price_range LIKE '%¥2,000-4,000%'").count,
-        'standard' => Bar.where("price_range LIKE '%¥3,000-5,000%' OR price_range LIKE '%¥4,000-7,000%'").count,
-        'luxury' => Bar.where("price_range LIKE '%¥5,000-8,000%' OR price_range LIKE '%¥6,000-10,000%'").count
-      },
-      smoking_status: Bar.group(:smoking_status).count
-    }
-  end
-=end
 end

@@ -179,7 +179,7 @@ window.clearAllFiltersUnified = () => {
 };
 
 window.filterByPrice = (price) =>
-  window.setFilterValue("price_range_eq", price);
+  window.setFilterValue("price_category_eq", price);
 window.filterBySmoking = (smoking) =>
   window.setFilterValue("smoking_status_eq", smoking);
 window.filterByArea = (area) => window.setFilterValue("address_cont", area);

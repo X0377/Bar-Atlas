@@ -11,7 +11,7 @@
   --font-pattern-3: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans",
     sans-serif;
 
-  /* 現在使用するフォント */
+  /* フォント迷い中: 現在使用するフォントを設定 */
   --font-primary: var(--font-pattern-1);
 
   --navy: #1a2b3c;
@@ -24,7 +24,6 @@
   --sidebar-width: 280px;
   --header-height: 80px;
 
-  /* rgba解消 */
   --shadow-card: 0 8px 32px color-mix(in srgb, var(--navy) 8%, transparent);
   --shadow-card-hover: 0 16px 50px
     color-mix(in srgb, var(--navy) 15%, transparent);

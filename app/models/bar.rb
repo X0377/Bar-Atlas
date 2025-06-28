@@ -44,12 +44,38 @@ class Bar < ApplicationRecord
 
   ransacker :price_category do
     Arel.sql("CASE
-      WHEN bars.price_range LIKE '%¥5,000-8,000%' OR bars.price_range LIKE '%¥6,000-10,000%' THEN 'luxury'
-      WHEN bars.price_range LIKE '%¥3,000-5,000%' OR bars.price_range LIKE '%¥4,000-7,000%' THEN 'standard'
-      WHEN bars.price_range LIKE '%¥2,000-4,000%' OR bars.price_range LIKE '%¥2,500-4,500%' THEN 'reasonable'
-      ELSE 'unknown'
+      WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 'unknown'
+
+      -- リーズナブル：下限が4000円以下 または 上限が4500円以下
+      WHEN bars.price_range ILIKE '¥1,%'
+        OR bars.price_range ILIKE '¥2,%'
+        OR bars.price_range ILIKE '¥3,%'
+        OR bars.price_range ILIKE '¥4,%'
+        OR bars.price_range ILIKE '%-2,%'
+        OR bars.price_range ILIKE '%-3,%'
+        OR bars.price_range ILIKE '%-4,%'
+        THEN 'reasonable'
+
+      -- 高級：下限が8000円以上 または 上限が10000円以上
+      WHEN bars.price_range ILIKE '¥8,%'
+        OR bars.price_range ILIKE '¥9,%'
+        OR bars.price_range ILIKE '¥10,%'
+        OR bars.price_range ILIKE '¥12,%'
+        OR bars.price_range ILIKE '¥15,%'
+        OR bars.price_range ILIKE '¥20,%'
+        OR bars.price_range ILIKE '%-8,%'
+        OR bars.price_range ILIKE '%-9,%'
+        OR bars.price_range ILIKE '%-10,%'
+        OR bars.price_range ILIKE '%-12,%'
+        OR bars.price_range ILIKE '%-15,%'
+        OR bars.price_range ILIKE '%-20,%'
+        THEN 'luxury'
+
+      -- 標準：それ以外（5000-8000円台）
+      ELSE 'standard'
     END")
   end
+
 
   scope :search_by_keywords, ->(keywords_string) {
     return all if keywords_string.blank?
@@ -73,4 +99,124 @@ class Bar < ApplicationRecord
 
     result.distinct
   }
+
+  # Geocoding関連
+  def geocoded?
+    latitude.present? && longitude.present?
+  end
+
+  def geocode!
+    return false if address.blank?
+
+    geocoding_service = GeocodingService.new
+    result = geocoding_service.geocode_address(address)
+
+    if result[:success]
+      update(
+        latitude: result[:latitude],
+        longitude: result[:longitude]
+      )
+      true
+    else
+      Rails.logger.warn "Geocoding failed for #{name}: #{result[:error]}"
+      false
+    end
+  rescue => e
+    Rails.logger.error "Geocoding error for #{name}: #{e.message}"
+    false
+  end
+
+  def reverse_geocode!
+    return false unless geocoded?
+
+    geocoding_service = GeocodingService.new
+    result = geocoding_service.reverse_geocode(latitude, longitude)
+
+    if result[:success]
+      update(address: result[:address])
+      true
+    else
+      false
+    end
+  rescue => e
+    Rails.logger.error "Reverse geocoding error for #{name}: #{e.message}"
+    false
+  end
+
+  def self.geocode_all!
+    where(latitude: nil).find_each do |bar|
+      bar.geocode!
+      sleep(0.1) # API制限回避
+    end
+  end
+
+  # 価格帯の下限と上限を数値として抽出するためのransacker
+  # 下限価格抽出（¥1,500-3,000 → 1500）
+  ransacker :price_min do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        ELSE CAST(
+          REGEXP_REPLACE(
+            SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+            '[^0-9]', '', 'g'
+          ) AS INTEGER
+        )
+      END
+    ")
+  end
+
+  # 上限価格抽出（¥1,500-3,000 → 3000）
+  ransacker :price_max do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        WHEN POSITION('-' IN bars.price_range) = 0 THEN
+          CAST(
+            REGEXP_REPLACE(
+              REPLACE(bars.price_range, '¥', ''),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          )
+        ELSE CAST(
+          REGEXP_REPLACE(
+            SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+            '[^0-9]', '', 'g'
+          ) AS INTEGER
+        )
+      END
+    ")
+  end
+
+  # 価格帯の平均値
+  ransacker :price_average do
+    Arel.sql("
+      CASE
+        WHEN bars.price_range IS NULL OR bars.price_range = '' THEN 0
+        ELSE (
+          CAST(
+            REGEXP_REPLACE(
+              SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 1),
+              '[^0-9]', '', 'g'
+            ) AS INTEGER
+          ) +
+          CASE
+            WHEN POSITION('-' IN bars.price_range) = 0 THEN
+              CAST(
+                REGEXP_REPLACE(
+                  REPLACE(bars.price_range, '¥', ''),
+                  '[^0-9]', '', 'g'
+                ) AS INTEGER
+              )
+            ELSE CAST(
+              REGEXP_REPLACE(
+                SPLIT_PART(REPLACE(bars.price_range, '¥', ''), '-', 2),
+                '[^0-9]', '', 'g'
+              ) AS INTEGER
+            )
+          END
+        ) / 2
+      END
+    ")
+  end
 end

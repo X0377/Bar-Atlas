@@ -2,3 +2,5 @@
 import "@hotwired/turbo-rails";
 import "controllers";
 import "./search_filters";
+
+console.log("Application JavaScript loaded");

@@ -12,6 +12,48 @@
   }
 }
 
+.view-hidden {
+  display: none !important;
+}
+
+.view-visible {
+  display: block !important;
+}
+
+.view-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* ページネーション */
+nav.pagination[role="navigation"] {
+  @apply flex items-center justify-center gap-4 my-6 p-4 !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+nav.pagination span.page a {
+  @apply inline-flex items-center justify-center min-w-[42px] h-10 px-3 text-sm font-semibold rounded-lg transition-all duration-300 bg-white text-gray-600 border-0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+nav.pagination span.page a:hover {
+  @apply text-gray-800 !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+nav.pagination span.page.current {
+  @apply inline-flex items-center justify-center min-w-[42px] h-10 px-3 text-sm font-semibold rounded-lg text-white !important;
+  background: linear-gradient(
+    135deg,
+    var(--navy) 0%,
+    var(--wine) 100%
+  ) !important;
+  box-shadow: 0 4px 16px rgba(26, 43, 60, 0.25) !important;
+}
+
 @layer components {
   .app-header {
     background: linear-gradient(90deg, var(--navy) 0%, var(--wine) 100%);
@@ -40,6 +82,7 @@
   .main-content {
     @apply flex-1 p-6;
   }
+
   .section-header {
     @apply flex justify-between items-center mb-8;
   }
@@ -93,9 +136,8 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
   }
 
-  /* === バーカードヘッダー：画像対応用 === */
   .bar-card-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
+    background: linear-gradient(90deg, var(--navy) 0%, rgba(26, 43, 60, 1) 50%);
     background-size: cover;
     background-position: center;
     position: relative;
@@ -110,9 +152,10 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(
-      135deg,
-      rgba(26, 43, 60, 0.85) 0%,
-      rgba(114, 47, 55, 0.85) 100%
+      90deg,
+      rgba(26, 43, 60, 1) 0%,
+      rgba(26, 43, 60, 0.7) 50%,
+      rgba(26, 43, 60, 0.1) 90%
     );
     z-index: 1;
   }
@@ -160,6 +203,7 @@
     font-family: var(--font-primary);
     @apply bg-gray-100 text-slate-700 px-3 py-1 rounded-md text-xs font-medium hover:bg-amber-100 transition-colors cursor-pointer;
   }
+
   .info-grid {
     @apply space-y-3;
   }
@@ -266,44 +310,64 @@
     border: 2px solid var(--wine);
     box-shadow: 0 2px 6px rgba(114, 47, 55, 0.25);
   }
-}
 
-/* === レスポンシブ === */
-@media (max-width: 1023px) {
-  .main-layout {
-    @apply flex-col pt-16;
+  /* レスポンシブ */
+  @media (max-width: 1023px) {
+    .main-layout {
+      @apply flex-col pt-16;
+    }
+
+    .app-sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      @apply top-0 p-4;
+    }
+
+    .section-header {
+      @apply flex-col gap-3 items-start mb-4;
+    }
+
+    .bar-grid {
+      @apply grid-cols-1 gap-4;
+    }
+
+    .map-container {
+      @apply mx-0;
+    }
   }
 
-  .app-sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    @apply top-0 p-4;
-  }
+  @media (max-width: 640px) {
+    .main-content {
+      @apply p-4;
+    }
 
-  .section-header {
-    @apply flex-col gap-3 items-start mb-4;
-  }
+    .section-title {
+      @apply text-xl;
+    }
 
-  .bar-grid {
-    @apply grid-cols-1 gap-4;
-  }
-}
+    .app-header {
+      @apply px-4;
+    }
 
-@media (max-width: 640px) {
-  .main-content {
-    @apply p-4;
-  }
+    .header-title {
+      @apply text-base;
+    }
 
-  .section-title {
-    @apply text-xl;
-  }
+    .view-toggle {
+      @apply w-full;
+    }
 
-  .app-header {
-    @apply px-4;
-  }
+    .view-toggle-button {
+      @apply flex-1 justify-center;
+    }
 
-  .header-title {
-    @apply text-base;
+    .controls-container {
+      @apply flex-col gap-2 w-full;
+    }
+
+    .sort-select {
+      @apply w-full;
+    }
   }
 }

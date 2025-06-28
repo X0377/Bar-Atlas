@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_18_174124) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_26_121123) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -25,6 +25,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_18_174124) do
     t.string "phone"
     t.string "business_hours"
     t.string "image_url"
+    t.decimal "latitude", precision: 10, scale: 6
+    t.decimal "longitude", precision: 10, scale: 6
+    t.index ["latitude", "longitude"], name: "index_bars_on_coordinates"
   end
 
   create_table "specialties", force: :cascade do |t|

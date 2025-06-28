@@ -23,7 +23,6 @@
       <% end %>
       <% if params.dig(:q, :address_cont).present? %>
         <div class="filter-option" onclick="clearFilterValue('address_cont')">
-          <span class="text-lg">🔄</span>
           <span class="filter-option-label">すべて表示</span>
         </div>
       <% end %>
@@ -33,9 +32,9 @@
     <div class="sidebar-section-title">価格帯</div>
     <div class="filter-options-container">
       <% [
-        { value: 'reasonable', label: 'リーズナブル', description: '¥1,500〜' },
-        { value: 'standard', label: '標準', description: '¥3,000〜8,000' },
-        { value: 'luxury', label: '高級', description: '¥8,000〜' }
+        { value: 'reasonable', label: 'リーズナブル', description: 'Min 〜¥4,000 or Max 〜¥4,500' },
+        { value: 'standard', label: '標準', description: '' },
+        { value: 'luxury', label: '高級', description: 'Min ¥8,000〜 or Max 〜¥10,000' }
         ].each do |option| %>
         <div class="filter-option <%= 'active' if params.dig(:q, :price_category_eq) == option[:value] %>"
              onclick="setFilterValue('price_category_eq', '<%= option[:value] %>')">
@@ -48,7 +47,6 @@
       <% end %>
       <% if params.dig(:q, :price_category_eq).present? %>
         <div class="filter-option" onclick="clearFilterValue('price_category_eq')">
-          <span class="text-lg">🔄</span>
           <span class="filter-option-label">すべて表示</span>
         </div>
       <% end %>
@@ -72,7 +70,6 @@
       <% end %>
       <% if params.dig(:q, :smoking_status_eq).present? %>
         <div class="filter-option" onclick="clearFilterValue('smoking_status_eq')">
-          <span class="text-lg">🔄</span>
           <span class="filter-option-label">すべて表示</span>
         </div>
       <% end %>
@@ -82,7 +79,6 @@
   <% if search_performed? %>
     <div class="mb-6">
       <div class="filter-option" onclick="clearAllFiltersUnified()" style="justify-content: center; background-color: var(--wine); color: white;">
-        <span class="text-lg">🔄</span>
         <span class="filter-option-label">すべての条件をクリア</span>
       </div>
     </div>
