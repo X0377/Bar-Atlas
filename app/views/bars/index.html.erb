@@ -125,7 +125,7 @@
         </div>
       </div>
       <% if @bars.respond_to?(:current_page) %>
-        <div class="mt-8 flex justify-center">
+        <div class="mt-8 flex justify-center" data-view-toggle-target="listPagination">
           <%= paginate @bars %>
         </div>
       <% end %>

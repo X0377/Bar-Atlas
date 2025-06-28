@@ -7,6 +7,7 @@ export default class extends Controller {
     "listButton",
     "mapButton",
     "sortSelect",
+    "listPagination",
   ];
   static values = {
     currentView: String,
@@ -15,13 +16,11 @@ export default class extends Controller {
   connect() {
     console.log("🎯 View toggle controller connected");
 
-    // 強制的に初期状態リセット
     this.forceInitialState();
 
     const savedView = this.getSavedViewPreference();
     console.log("📋 Saved view preference:", savedView);
 
-    // 遅延
     setTimeout(() => {
       this.toggleView(savedView);
     }, 100);
@@ -52,6 +51,12 @@ export default class extends Controller {
 
     if (this.hasMapButtonTarget) {
       this.mapButtonTarget.classList.remove("active");
+    }
+
+    // ページネーション初期表示（リストビュー用）
+    if (this.hasListPaginationTarget) {
+      this.listPaginationTarget.classList.remove("hidden");
+      this.listPaginationTarget.style.display = "block";
     }
 
     console.log("✅ Initial state forced");
@@ -108,6 +113,13 @@ export default class extends Controller {
     if (this.hasMapButtonTarget) {
       this.mapButtonTarget.classList.remove("active");
     }
+
+    // ページネーション表示（リストビューのみ）
+    if (this.hasListPaginationTarget) {
+      this.listPaginationTarget.classList.remove("hidden");
+      this.listPaginationTarget.style.display = "block";
+      console.log("✅ Pagination shown for list view");
+    }
   }
 
   showMapView() {
@@ -133,6 +145,13 @@ export default class extends Controller {
 
     if (this.hasListButtonTarget) {
       this.listButtonTarget.classList.remove("active");
+    }
+
+    // ページネーション非表示（マップビューでは不要）
+    if (this.hasListPaginationTarget) {
+      this.listPaginationTarget.classList.add("hidden");
+      this.listPaginationTarget.style.display = "none";
+      console.log("✅ Pagination hidden for map view");
     }
 
     this.resizeMap();
