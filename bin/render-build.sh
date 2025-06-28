@@ -8,3 +8,4 @@ bundle install
 ./bin/rails assets:precompile
 ./bin/rails db:migrate
 ./bin/rails db:seed
+./bin/rails geocoding:update_coordinates

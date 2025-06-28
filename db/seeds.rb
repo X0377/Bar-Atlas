@@ -1,7 +1,6 @@
-unless Rails.env.production?
-  Bar.destroy_all
-  Specialty.destroy_all
-end
+puts "🧹 既存データをクリーンアップ中..."
+Specialty.destroy_all
+Bar.destroy_all
 
 bars_data = [
   # === 渋谷エリア（10件） ===
