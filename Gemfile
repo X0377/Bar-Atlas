@@ -13,6 +13,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 gem "tailwindcss-rails", "~> 3.3.1"
 gem 'kaminari'
+gem "httparty"
 
 # Application features
 gem "ransack"       # Search functionality
@@ -59,5 +60,4 @@ group :development do
   # Uncomment for performance profiling
   # gem "rack-mini-profiler"
   # gem "spring"
-  gem "httparty"
 end
