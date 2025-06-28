@@ -116,8 +116,6 @@ export default class extends Controller {
               closeIcon.style.setProperty("height", "18px", "important");
               closeIcon.style.setProperty("margin", "7px", "important");
             }
-
-            if (this.debug) console.log("🎨 Close button resized!");
           }
         }, 100);
 
