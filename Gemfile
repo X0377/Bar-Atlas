@@ -11,7 +11,9 @@ gem "puma", ">= 5.0"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
-gem "tailwindcss-rails"
+gem "tailwindcss-rails", "~> 3.3.1"
+gem "sassc-rails"  # SCSS compiler
+gem 'kaminari'
 
 # Application features
 gem "ransack"       # Search functionality
@@ -58,4 +60,5 @@ group :development do
   # Uncomment for performance profiling
   # gem "rack-mini-profiler"
   # gem "spring"
+  gem "httparty"
 end
