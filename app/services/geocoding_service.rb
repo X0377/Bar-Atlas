@@ -1,4 +1,5 @@
-# app/services/geocoding_service.rb
+require 'httparty'
+
 class GeocodingService
   include HTTParty
   base_uri 'https://maps.googleapis.com'
@@ -10,7 +11,7 @@ class GeocodingService
 
   def geocode_address(address)
     Rails.logger.info "Geocoding address: #{address}"
-    
+
     response = self.class.get('/maps/api/geocode/json', {
       query: {
         address: address,
@@ -22,7 +23,7 @@ class GeocodingService
 
     if response.success?
       result = response.parsed_response
-      
+
       if result['status'] == 'OK' && result['results'].any?
         location = result['results'].first['geometry']['location']
         {
@@ -56,7 +57,7 @@ class GeocodingService
 
     if response.success?
       result = response.parsed_response
-      
+
       if result['status'] == 'OK' && result['results'].any?
         {
           address: result['results'].first['formatted_address'],
