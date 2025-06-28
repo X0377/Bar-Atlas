@@ -43,77 +43,88 @@
                 <span class="bg-white px-3 py-1 rounded-full text-sm border">
                   🔍 "<%= params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont) %>"
                   <button onclick="clearFilter('name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont')"
-                      class="ml-2 text-gray-500 hover:text-red-500">×</button>
+                  class="ml-2 text-gray-500 hover:text-red-500">×</button>
                 </span>
               <% end %>
               <% if params.dig(:q, :address_cont).present? %>
                 <span class="bg-white px-3 py-1 rounded-full text-sm border">
                   📍 <%= params.dig(:q, :address_cont) %>
                   <button onclick="clearFilter('address_cont')"
-                      class="ml-2 text-gray-500 hover:text-red-500">×</button>
+                  class="ml-2 text-gray-500 hover:text-red-500">×</button>
                 </span>
               <% end %>
               <% if params.dig(:q, :price_category_eq).present? %>
                 <span class="bg-white px-3 py-1 rounded-full text-sm border">
                   💰 <%= case params.dig(:q, :price_category_eq)
-                     when 'reasonable' then 'リーズナブル'
-                     when 'standard' then '標準'
-                     when 'luxury' then '高級'
-                     end %>
+                 when 'reasonable' then 'リーズナブル'
+                 when 'standard' then '標準'
+                 when 'luxury' then '高級'
+                 end %>
                   <button onclick="clearFilter('price_category_eq')"
-                      class="ml-2 text-gray-500 hover:text-red-500">×</button>
+                  class="ml-2 text-gray-500 hover:text-red-500">×</button>
+                </span>
+              <% end %>
+              <% if params.dig(:q, :specialties_category_eq).present? %>
+                <span class="bg-white px-3 py-1 rounded-full text-sm border">
+                  🍸 <%= params.dig(:q, :specialties_category_eq) %>
+                  <button onclick="clearFilter('specialties_category_eq')"
+                  class="ml-2 text-gray-500 hover:text-red-500">×</button>
                 </span>
               <% end %>
               <% if params.dig(:q, :smoking_status_eq).present? %>
                 <span class="bg-white px-3 py-1 rounded-full text-sm border">
                   🚭 <%= params.dig(:q, :smoking_status_eq) %>
                   <button onclick="clearFilter('smoking_status_eq')"
-                      class="ml-2 text-gray-500 hover:text-red-500">×</button>
+                  class="ml-2 text-gray-500 hover:text-red-500">×</button>
                 </span>
               <% end %>
             </div>
             <button onclick="clearAllFiltersUnified()"
-                class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            class="text-sm text-blue-600 hover:text-blue-800 font-medium">
               すべてクリア
             </button>
           </div>
         </div>
       <% end %>
-      <div data-view-toggle-target="mapView" class="hidden">
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
-          <div class="p-4 border-b border-gray-200">
-            <div class="flex justify-between items-center">
-              <h3 class="text-lg font-semibold text-gray-900">
-                地図で探す
-                <span class="text-sm font-normal text-gray-500 ml-2">
-                  (<%= @bars_for_map_count %>件のバーを表示)
-                </span>
-              </h3>
+      <div class="content-container">
+        <div data-view-toggle-target="mapView" class="hidden">
+          <div class="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
+            <div class="p-4 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  地図で探す
+                  <span class="text-sm font-normal text-gray-500 ml-2">
+                    (<%= @bars_for_map_count %>件のバーを表示)
+                  </span>
+                </h3>
+              </div>
             </div>
-          </div>
-          <div data-controller="google-maps"
-           data-google-maps-api-key-value="<%= Rails.application.credentials.dig(:google_maps, :api_key) || ENV['GOOGLE_MAPS_API_KEY'] %>"
-           data-google-maps-bars-value="<%= @bars_for_map.to_json %>"
-           data-google-maps-center-value='{"lat": 35.6812, "lng": 139.7671}'
-           class="w-full">
-            <div data-google-maps-target="map"
-             style="height: 500px; width: 100%;"
-             class="bg-gray-100 flex items-center justify-center">
-              <div class="text-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-                <p class="text-gray-600">地図を読み込み中...</p>
+            <div data-controller="google-maps"
+         data-google-maps-api-key-value="<%= Rails.application.credentials.dig(:google_maps, :api_key) || ENV['GOOGLE_MAPS_API_KEY'] %>"
+         data-google-maps-bars-value="<%= @bars_for_map.to_json %>"
+         data-google-maps-center-value='{"lat": 35.6812, "lng": 139.7671}'
+         class="w-full">
+              <div data-google-maps-target="map"
+           style="height: 500px; width: 100%;"
+           class="bg-gray-100 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                  <p class="text-gray-600">地図を読み込み中...</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div data-view-toggle-target="listView">
-        <div class="bar-grid">
-          <% @bars.each do |bar| %>
-            <%= render 'bar_card_with_map', bar: bar %>
-          <% end %>
+        <!-- リストビュー -->
+        <div data-view-toggle-target="listView">
+          <div class="bar-grid">
+            <% @bars.each do |bar| %>
+              <%= render 'bar_card_with_map', bar: bar %>
+            <% end %>
+          </div>
         </div>
       </div>
+      <!-- ページネーション -->
       <% if @bars.respond_to?(:current_page) %>
         <div class="mt-8 flex justify-center" data-view-toggle-target="listPagination">
           <%= paginate @bars %>
