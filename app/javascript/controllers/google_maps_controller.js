@@ -94,7 +94,7 @@ export default class extends Controller {
         });
 
         const infoWindow = new google.maps.InfoWindow({
-          content: this.createInfoWindowContent(bar),
+          content: this.createInfoWindowContentFallback(bar),
           maxWidth: 300,
         });
 
@@ -116,86 +116,92 @@ export default class extends Controller {
     });
   }
 
-  createInfoWindowContent(bar) {
-    // 一旦パーシャル読み込みは無効化してフォールバック処理で安定動作させる
-    return this.createInfoWindowContentFallback(bar);
-  }
-
-  // 現時点では確実に動作することを目的として美しくないコードとなっているため、後日修正予定
   createInfoWindowContentFallback(bar) {
-    console.log("🔧 Creating InfoWindow for:", bar.name); // デバッグ用
+    console.log("🔧 Creating FINAL InfoWindow for:", bar.name);
 
     const container = document.createElement("div");
     container.style.cssText = `
-      padding: 16px;
-      background: white;
-      border-radius: 8px;
       font-family: 'Inter', sans-serif;
-      width: 280px;
-      box-sizing: border-box;
+      width: 250px;
+      overflow: hidden;
+      background: white;
+      line-height: 1.5;
     `;
 
-    container.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 8px;">
-        <div style="flex: 1; min-width: 0;">
-          <h3 style="font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 4px 0; line-height: 1.3;">${
-            bar.name
-          }</h3>
-          <div style="font-size: 12px; color: #6b7280; margin-bottom: 8px; display: flex; align-items: flex-start;">
-            <svg style="width: 12px; height: 12px; margin-right: 4px; margin-top: 2px; flex-shrink: 0;" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-            </svg>
-            <span style="line-height: 1.3;">${bar.address}</span>
-          </div>
-        </div>
-        <span style="background-color: #dac19c; color: #1a2b3c; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; flex-shrink: 0;">${
-          bar.price_range
-        }</span>
-      </div>
-
-      <div style="margin-bottom: 12px;">
-        ${
-          bar.business_hours
-            ? `
-          <div style="display: flex; align-items: center; margin-bottom: 4px;">
-            <svg style="width: 12px; height: 12px; margin-right: 6px; color: #9ca3af;" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
-            </svg>
-            <span style="font-size: 12px; color: #6b7280;">${bar.business_hours}</span>
-          </div>
-        `
-            : ""
-        }
-
-        <div style="display: flex; align-items: center; margin-bottom: 4px;">
-          <svg style="width: 12px; height: 12px; margin-right: 6px; color: #9ca3af;" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a2 2 0 104 0 2 2 0 00-4 0zm6 0a2 2 0 104 0 2 2 0 00-4 0z" clip-rule="evenodd"></path>
-          </svg>
-          <span style="font-size: 12px; color: #6b7280;">${
-            bar.smoking_status
-          }</span>
-        </div>
-      </div>
-
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <a href="/bars/${bar.id}"
-           style="flex: 1; background: linear-gradient(135deg, #1a2b3c 0%, #722f37 100%); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center; display: block;"
-           onmouseover="this.style.transform='translateY(-1px)'"
-           onmouseout="this.style.transform='translateY(0)'">
-          詳細を見る
-        </a>
-        <button style="flex-shrink: 0; padding: 8px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; color: #6b7280; cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;"
-                onmouseover="this.style.color='#ef4444'; this.style.borderColor='#ef4444';"
-                onmouseout="this.style.color='#6b7280'; this.style.borderColor='#e5e7eb';"
-                title="お気に入りに追加">
-          <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-          </svg>
-        </button>
-      </div>
+    const header = document.createElement("div");
+    header.style.cssText = `
+      background: #1a2b3c;
+      color: white;
+      padding: 12px 16px;
+      padding-right: 30px;
+      border-radius: 8px;
+    `;
+    header.innerHTML = `
+      <h3 style="font-size: 16px; font-weight: 700; margin: 0; line-height: 1.3;">
+        ${bar.name}
+      </h3>
     `;
 
-    console.log("✅ InfoWindow created successfully"); // デバッグ用
+    const body = document.createElement("div");
+    body.style.cssText = `
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    `;
+
+    const createInfoRow = (icon, text) => {
+      if (!text) return "";
+      return `
+        <div style="display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #4b5563;">
+          <div style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;">${icon}</div>
+          <span style="flex: 1;">${text}</span>
+        </div>
+      `;
+    };
+
+    // アイコン定義
+    const priceIcon = "💰";
+    const addressIcon = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>`;
+    const timeIcon = `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path></svg>`;
+    const smokingIcon = `<svg fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM3.293 4.707a1 1 0 00-1.414 1.414L3.586 7.83a1 1 0 001.414-1.414L3.293 4.707zM15.293 4.707a1 1 0 00-1.414-1.414L12.17 7.83a1 1 0 101.414 1.414l1.707-1.707zM10 16a6 6 0 100-12 6 6 0 000 12z" /><path d="M11.415 11.414a1 1 0 01.172.036l3.396 1.132A1 1 0 0114 13.5v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-1a1 1 0 01.98-.996l3.396-1.132a1 1 0 01.039-.004h.001z" /></svg>`;
+
+    body.innerHTML = `
+      ${createInfoRow(priceIcon, bar.price_range)}
+      ${createInfoRow(addressIcon, bar.address)}
+      ${createInfoRow(timeIcon, bar.business_hours)}
+      ${createInfoRow(smokingIcon, bar.smoking_status)}
+    `;
+
+    // ボタン
+    const footer = document.createElement("div");
+    footer.style.cssText = `
+      padding: 0 16px 12px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    `;
+    footer.innerHTML = `
+      <a href="/bars/${bar.id}"
+         style="flex: 1; background: linear-gradient(135deg, #1a2b3c 0%, #722f37 100%); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; text-align: center; display: block; transition: transform 0.2s ease;"
+         onmouseover="this.style.transform='translateY(-1px)'"
+         onmouseout="this.style.transform='translateY(0)'">
+        詳細を見る
+      </a>
+      <button style="flex-shrink: 0; padding: 8px; background: white; border: 1px solid #e5e7eb; border-radius: 6px; color: #6b7280; cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;"
+              onmouseover="this.style.color='#ef4444'; this.style.borderColor='#ef4444';"
+              onmouseout="this.style.color='#6b7280'; this.style.borderColor='#e5e7eb';"
+              title="お気に入りに追加">
+        <svg style="width: 16px; height: 16px;" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+        </svg>
+      </button>
+    `;
+
+    container.appendChild(header);
+    container.appendChild(body);
+    container.appendChild(footer);
+
     return container;
   }
 
