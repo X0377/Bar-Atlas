@@ -16,7 +16,7 @@ class BarsController < ApplicationController
     @bars = apply_sorting(@bars)
 
     @bars = @bars.group('bars.id')
-    @total_count = @bars.count
+    @total_count = @bars.count.keys.size
 
     # ページネーション
     @bars = @bars.page(params[:page]).per(20)
