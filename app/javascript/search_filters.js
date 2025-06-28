@@ -15,7 +15,6 @@ class SearchFilters {
   initializeEventListeners() {
     if (!this.form) {
       if (this.debug) {
-        console.warn("Form with id 'unified-search-form' not found");
       }
       return;
     }
