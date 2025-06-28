@@ -1,15 +1,142 @@
-<% content_for :title, "Showing bar" %>
-
-<div class="md:w-2/3 w-full">
-  <% if notice.present? %>
-    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-md inline-block" id="notice"><%= notice %></p>
-  <% end %>
-
-  <h1 class="font-bold text-4xl">Showing bar</h1>
-
-  <%= render @bar %>
-
-  <%= link_to "Edit this bar", edit_bar_path(@bar), class: "w-full sm:w-auto text-center rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to bars", bars_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= button_to "Destroy this bar", @bar, method: :delete, form_class: "sm:inline-block mt-2 sm:mt-0 sm:ml-2", class: "w-full rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" } %>
+<div class="container mx-auto p-6">
+  <!-- 開発中バナー -->
+  <div class="bg-gradient-to-r from-yellow-400 to-orange-500 text-black p-4 rounded-lg mb-6 shadow-lg">
+    <div class="flex items-center gap-3">
+      <span class="text-2xl">🚧</span>
+      <div>
+        <h2 class="font-bold text-lg">詳細ページ開発中！</h2>
+        <p class="text-sm opacity-90">現在基本機能のみ表示中。地図機能・レビュー機能など順次追加予定！</p>
+      </div>
+    </div>
+  </div>
+  <!-- メインコンテンツ -->
+  <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <!-- ヘッダー部分 -->
+    <div class="bar-card-header">
+      <div class="bar-card-header-content">
+        <div>
+          <h1 class="bar-card-title text-2xl"><%= @bar.name %></h1>
+          <p class="bar-card-address"><%= @bar.address %></p>
+        </div>
+        <div class="bar-card-tags">
+          <span class="status-tag"><%= @bar.smoking_status %></span>
+          <span class="rating-tag"><%= @bar.price_range %></span>
+        </div>
+      </div>
+    </div>
+    <!-- ボディ部分 -->
+    <div class="p-6">
+      <!-- 基本情報セクション -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span>📍</span> 基本情報
+        </h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">住所</span>
+            <span class="info-value"><%= @bar.address %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">価格帯</span>
+            <span class="info-value"><%= @bar.price_range %></span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">喫煙状況</span>
+            <span class="info-value"><%= @bar.smoking_status %></span>
+          </div>
+          <% if @bar.phone.present? %>
+            <div class="info-item">
+              <span class="info-label">電話番号</span>
+              <span class="info-value"><%= @bar.phone %></span>
+            </div>
+          <% end %>
+          <% if @bar.business_hours.present? %>
+            <div class="info-item">
+              <span class="info-label">営業時間</span>
+              <span class="info-value"><%= @bar.business_hours %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <!-- 専門分野セクション -->
+      <% if @bar.specialties.any? %>
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span>🍸</span> 専門分野
+          </h3>
+          <div class="specialty-tags-container">
+            <% @bar.specialties.each do |specialty| %>
+              <span class="specialty-tag">
+                <%= specialty.category %>
+                <% if specialty.is_main %>
+                  <span class="ml-1 text-yellow-600">★</span>
+                <% end %>
+              </span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <!-- 詳細説明 -->
+      <% if @bar.description.present? %>
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+            <span>📝</span> 詳細
+          </h3>
+          <p class="text-gray-700 leading-relaxed"><%= @bar.description %></p>
+        </div>
+      <% end %>
+      <!-- 開発予定機能 -->
+      <div class="mb-8">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span>🔮</span> 開発予定機能
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div class="flex items-center gap-2 mb-2">
+              <span>🗺️</span>
+              <span class="font-medium text-gray-600">地図表示</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs rounded-full">準備中</span>
+            </div>
+            <p class="text-sm text-gray-600">Google Maps連携予定</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div class="flex items-center gap-2 mb-2">
+              <span>⭐</span>
+              <span class="font-medium text-gray-600">お気に入り機能</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs rounded-full">準備中</span>
+            </div>
+            <p class="text-sm text-gray-600">ユーザー認証後実装予定</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div class="flex items-center gap-2 mb-2">
+              <span>💬</span>
+              <span class="font-medium text-gray-600">レビュー・コメント</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs rounded-full">準備中</span>
+            </div>
+            <p class="text-sm text-gray-600">ユーザーレビュー機能</p>
+          </div>
+          <div class="p-4 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+            <div class="flex items-center gap-2 mb-2">
+              <span>📷</span>
+              <span class="font-medium text-gray-600">写真ギャラリー</span>
+              <span class="bg-yellow-100 text-yellow-800 px-2 py-1 text-xs rounded-full">準備中</span>
+            </div>
+            <p class="text-sm text-gray-600">店舗画像アップロード機能</p>
+          </div>
+        </div>
+      </div>
+      <!-- アクションボタン -->
+      <div class="flex gap-4">
+        <%= link_to bars_path, class: "detail-button flex-none w-auto px-6" do %>
+          <span>← 一覧に戻る</span>
+        <% end %>
+        <button class="flex-1 bg-gray-200 text-gray-500 py-2.5 rounded-lg font-medium text-sm cursor-not-allowed" disabled>
+          <span class="flex items-center justify-center gap-2">
+            <span>⭐</span>
+            <span>お気に入りに追加（準備中）</span>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
