@@ -16,50 +16,58 @@ export default class extends Controller {
   connect() {
     console.log("🎯 View toggle controller connected");
 
-    this.forceInitialState();
-
+    const urlView = this.getViewFromURL();
     const savedView = this.getSavedViewPreference();
-    console.log("📋 Saved view preference:", savedView);
+    const initialView = urlView || savedView || "list";
 
-    setTimeout(() => {
-      this.toggleView(savedView);
-    }, 100);
+    console.log("📋 URL view:", urlView);
+    console.log("💾 Saved view preference:", savedView);
+    console.log("🎯 Initial view:", initialView);
+
+    this.setInitialState(initialView);
+    this.currentViewValue = initialView;
 
     this.updateSortSelect();
+    this.element.viewToggleController = this;
   }
 
-  forceInitialState() {
-    console.log("🔄 Forcing initial state");
+  getViewFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const viewParam = urlParams.get("view");
+    return viewParam === "map" || viewParam === "list" ? viewParam : null;
+  }
 
+  setInitialState(targetView) {
+    console.log("🔄 Setting initial state to:", targetView);
+
+    this.hideAllViews();
+
+    if (targetView === "map") {
+      this.showMapViewInternal();
+    } else {
+      this.showListViewInternal();
+    }
+
+    console.log("✅ Initial state set to:", targetView);
+  }
+
+  hideAllViews() {
     if (this.hasListViewTarget) {
-      this.listViewTarget.classList.remove("view-hidden");
-      this.listViewTarget.classList.add("view-visible");
-      this.listViewTarget.classList.remove("hidden");
-      this.listViewTarget.style.display = "block";
+      this.listViewTarget.classList.add("view-hidden", "hidden");
+      this.listViewTarget.classList.remove("view-visible");
+      this.listViewTarget.style.display = "none";
     }
 
     if (this.hasMapViewTarget) {
-      this.mapViewTarget.classList.add("view-hidden");
+      this.mapViewTarget.classList.add("view-hidden", "hidden");
       this.mapViewTarget.classList.remove("view-visible");
-      this.mapViewTarget.classList.add("hidden");
       this.mapViewTarget.style.display = "none";
     }
 
-    if (this.hasListButtonTarget) {
-      this.listButtonTarget.classList.add("active");
-    }
-
-    if (this.hasMapButtonTarget) {
-      this.mapButtonTarget.classList.remove("active");
-    }
-
-    // ページネーション初期表示（リストビュー用）
     if (this.hasListPaginationTarget) {
-      this.listPaginationTarget.classList.remove("hidden");
-      this.listPaginationTarget.style.display = "block";
+      this.listPaginationTarget.classList.add("hidden");
+      this.listPaginationTarget.style.display = "none";
     }
-
-    console.log("✅ Initial state forced");
   }
 
   get debug() {
@@ -75,35 +83,41 @@ export default class extends Controller {
     console.log("💾 Saved preference:", view);
   }
 
+  updateURL(view) {
+    const url = new URL(window.location);
+    url.searchParams.set("view", view);
+    window.history.replaceState({}, "", url.toString());
+    console.log("🔗 URL updated with view:", view);
+  }
+
   toggleView(viewType = null) {
     const view = viewType || this.currentViewValue || "list";
     console.log("🔄 Toggling to view:", view);
 
     if (view === "map") {
-      this.showMapView();
+      this.showMapViewInternal();
     } else {
-      this.showListView();
+      this.showListViewInternal();
     }
 
     this.currentViewValue = view;
     this.saveViewPreference(view);
+    this.updateURL(view);
   }
 
-  showListView() {
-    console.log("📋 Showing list view");
+  showListViewInternal() {
+    console.log("📋 Showing list view (internal)");
 
     if (this.hasListViewTarget) {
       this.listViewTarget.classList.remove("view-hidden", "hidden");
-      this.listViewTarget.classList.add("view-visible", "view-transition");
+      this.listViewTarget.classList.add("view-visible");
       this.listViewTarget.style.display = "block";
-      console.log("✅ List view shown");
     }
 
     if (this.hasMapViewTarget) {
       this.mapViewTarget.classList.add("view-hidden", "hidden");
       this.mapViewTarget.classList.remove("view-visible");
       this.mapViewTarget.style.display = "none";
-      console.log("✅ Map view hidden");
     }
 
     if (this.hasListButtonTarget) {
@@ -114,29 +128,28 @@ export default class extends Controller {
       this.mapButtonTarget.classList.remove("active");
     }
 
-    // ページネーション表示（リストビューのみ）
     if (this.hasListPaginationTarget) {
       this.listPaginationTarget.classList.remove("hidden");
       this.listPaginationTarget.style.display = "block";
-      console.log("✅ Pagination shown for list view");
     }
+
+    // 🚀 ソートを表示
+    this.showSortSelect();
   }
 
-  showMapView() {
-    console.log("🗺️ Showing map view");
+  showMapViewInternal() {
+    console.log("🗺️ Showing map view (internal)");
 
     if (this.hasMapViewTarget) {
       this.mapViewTarget.classList.remove("view-hidden", "hidden");
-      this.mapViewTarget.classList.add("view-visible", "view-transition");
+      this.mapViewTarget.classList.add("view-visible");
       this.mapViewTarget.style.display = "block";
-      console.log("✅ Map view shown");
     }
 
     if (this.hasListViewTarget) {
       this.listViewTarget.classList.add("view-hidden", "hidden");
       this.listViewTarget.classList.remove("view-visible");
       this.listViewTarget.style.display = "none";
-      console.log("✅ List view hidden");
     }
 
     if (this.hasMapButtonTarget) {
@@ -147,14 +160,42 @@ export default class extends Controller {
       this.listButtonTarget.classList.remove("active");
     }
 
-    // ページネーション非表示（マップビューでは不要）
     if (this.hasListPaginationTarget) {
       this.listPaginationTarget.classList.add("hidden");
       this.listPaginationTarget.style.display = "none";
-      console.log("✅ Pagination hidden for map view");
     }
 
+    // 🚀 ソートを非表示
+    this.hideSortSelect();
+
     this.resizeMap();
+  }
+
+  // 🚀 ソート表示制御メソッド修正（レイアウト保持のためvisibility使用）
+  showSortSelect() {
+    if (this.hasSortSelectTarget) {
+      this.sortSelectTarget.style.visibility = "visible";
+      this.sortSelectTarget.classList.remove("map-view-hidden");
+      console.log("👁️ Sort select shown");
+    }
+  }
+
+  hideSortSelect() {
+    if (this.hasSortSelectTarget) {
+      this.sortSelectTarget.style.visibility = "hidden";
+      this.sortSelectTarget.classList.add("map-view-hidden");
+      console.log("🙈 Sort select hidden");
+    }
+  }
+
+  showListView() {
+    console.log("📋 List view requested (external)");
+    this.toggleView("list");
+  }
+
+  showMapView() {
+    console.log("🗺️ Map view requested (external)");
+    this.toggleView("map");
   }
 
   resizeMap() {
@@ -171,19 +212,22 @@ export default class extends Controller {
 
   showList() {
     console.log("🖱️ List button clicked");
-    this.toggleView("list");
+    this.showListView();
   }
 
   showMap() {
     console.log("🖱️ Map button clicked");
-    this.toggleView("map");
+    this.showMapView();
   }
 
   handleSort(event) {
     const sortValue = event.target.value;
     console.log("🔄 Sort changed to:", sortValue);
+
     const url = new URL(window.location);
     url.searchParams.set("sort", sortValue);
+    url.searchParams.set("view", this.currentViewValue);
+
     window.location.href = url.toString();
   }
 
@@ -214,11 +258,52 @@ export default class extends Controller {
     }
   }
 
+  beforePageLeave() {
+    this.saveViewPreference(this.currentViewValue);
+    console.log("📤 Saved state before page leave:", this.currentViewValue);
+  }
+
+  getCurrentViewState() {
+    return this.currentViewValue;
+  }
+
+  preserveViewOnFilter() {
+    const currentView = this.currentViewValue;
+    const url = new URL(window.location);
+    url.searchParams.set("view", currentView);
+
+    const form = document.getElementById("unified-search-form");
+    if (form) {
+      form.action = url.toString();
+    }
+
+    console.log("🔄 View state preserved for filtering:", currentView);
+  }
+
   currentViewValueChanged() {
     console.log("🔄 Current view changed to:", this.currentViewValue);
   }
 
   disconnect() {
     console.log("❌ View toggle controller disconnected");
+    this.beforePageLeave();
   }
 }
+
+window.addEventListener("beforeunload", () => {
+  const viewToggleController = document.querySelector(
+    '[data-controller*="view-toggle"]'
+  );
+  if (viewToggleController && viewToggleController.viewToggleController) {
+    viewToggleController.viewToggleController.beforePageLeave();
+  }
+});
+
+document.addEventListener("turbo:before-visit", () => {
+  const viewToggleController = document.querySelector(
+    '[data-controller*="view-toggle"]'
+  );
+  if (viewToggleController && viewToggleController.viewToggleController) {
+    viewToggleController.viewToggleController.beforePageLeave();
+  }
+});
