@@ -132,6 +132,9 @@ export default class extends Controller {
       this.listPaginationTarget.classList.remove("hidden");
       this.listPaginationTarget.style.display = "block";
     }
+
+    // 🚀 ソートを表示
+    this.showSortSelect();
   }
 
   showMapViewInternal() {
@@ -162,7 +165,27 @@ export default class extends Controller {
       this.listPaginationTarget.style.display = "none";
     }
 
+    // 🚀 ソートを非表示
+    this.hideSortSelect();
+
     this.resizeMap();
+  }
+
+  // 🚀 ソート表示制御メソッド修正（レイアウト保持のためvisibility使用）
+  showSortSelect() {
+    if (this.hasSortSelectTarget) {
+      this.sortSelectTarget.style.visibility = "visible";
+      this.sortSelectTarget.classList.remove("map-view-hidden");
+      console.log("👁️ Sort select shown");
+    }
+  }
+
+  hideSortSelect() {
+    if (this.hasSortSelectTarget) {
+      this.sortSelectTarget.style.visibility = "hidden";
+      this.sortSelectTarget.classList.add("map-view-hidden");
+      console.log("🙈 Sort select hidden");
+    }
   }
 
   showListView() {

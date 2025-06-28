@@ -244,7 +244,7 @@ nav.pagination span.page.current {
     @apply flex justify-between items-center gap-3;
   }
 
-  /* 詳細ボタン - 最重要：色を確実に適用 */
+  /* 詳細ボタン */
   .detail-button {
     background: var(--navy) !important;
     color: white !important;
@@ -273,6 +273,31 @@ nav.pagination span.page.current {
   .favorite-button:hover {
     background-color: var(--wine);
     @apply border-red-900 text-white;
+  }
+  /* === Google Maps InfoWindow 専用スタイル修正 === */
+
+  /* InfoWindow全体のスタイルリセット */
+  .gm-style-iw {
+    padding: 0 !important;
+  }
+
+  .gm-style-iw-d {
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+  }
+
+  .gm-style-iw-c {
+    padding: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* ソート非表示制御 - レイアウト保持 */
+  .sort-select.map-view-hidden {
+    visibility: hidden !important;
   }
 
   /* === 検索・フィルター === */
@@ -371,8 +396,29 @@ nav.pagination span.page.current {
     }
   }
 
-  /* === ツールチップ === */
+  /* === 地図表示用 === */
+  .gm-style-iw {
+    padding: 0 !important;
+  }
 
+  .gm-style-iw-d {
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .gm-style-iw-c {
+    padding: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* ソート非表示制御 - レイアウト保持のため */
+  .sort-select.map-view-hidden {
+    visibility: hidden !important;
+  }
+
+  /* === ツールチップ === */
   /* デスクトップツールチップ */
   @media (min-width: 769px) {
     [data-tooltip]:hover::after {
