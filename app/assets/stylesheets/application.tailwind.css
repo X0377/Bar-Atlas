@@ -20,9 +20,38 @@
   display: block !important;
 }
 
-/* ビュー切り替え用 */
 .view-transition {
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* ページネーション */
+nav.pagination[role="navigation"] {
+  @apply flex items-center justify-center gap-4 my-6 p-4 !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+nav.pagination span.page a {
+  @apply inline-flex items-center justify-center min-w-[42px] h-10 px-3 text-sm font-semibold rounded-lg transition-all duration-300 bg-white text-gray-600 border-0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+nav.pagination span.page a:hover {
+  @apply text-gray-800 !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+nav.pagination span.page.current {
+  @apply inline-flex items-center justify-center min-w-[42px] h-10 px-3 text-sm font-semibold rounded-lg text-white !important;
+  background: linear-gradient(
+    135deg,
+    var(--navy) 0%,
+    var(--wine) 100%
+  ) !important;
+  box-shadow: 0 4px 16px rgba(26, 43, 60, 0.25) !important;
 }
 
 @layer components {
@@ -107,9 +136,8 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
   }
 
-  /* バーカードヘッダー画像対応 */
   .bar-card-header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--wine) 100%);
+    background: linear-gradient(90deg, var(--navy) 0%, rgba(26, 43, 60, 1) 50%);
     background-size: cover;
     background-position: center;
     position: relative;
@@ -124,9 +152,10 @@
     right: 0;
     bottom: 0;
     background: linear-gradient(
-      135deg,
-      rgba(26, 43, 60, 0.85) 0%,
-      rgba(114, 47, 55, 0.85) 100%
+      90deg,
+      rgba(26, 43, 60, 1) 0%,
+      rgba(26, 43, 60, 0.7) 50%,
+      rgba(26, 43, 60, 0.1) 90%
     );
     z-index: 1;
   }
@@ -282,94 +311,63 @@
     box-shadow: 0 2px 6px rgba(114, 47, 55, 0.25);
   }
 
-  /*  Google Maps関連 */
-  .map-container {
-    @apply w-full bg-gray-100 rounded-lg overflow-hidden shadow-sm;
+  /* レスポンシブ */
+  @media (max-width: 1023px) {
+    .main-layout {
+      @apply flex-col pt-16;
+    }
+
+    .app-sidebar {
+      width: 100%;
+      height: auto;
+      position: static;
+      @apply top-0 p-4;
+    }
+
+    .section-header {
+      @apply flex-col gap-3 items-start mb-4;
+    }
+
+    .bar-grid {
+      @apply grid-cols-1 gap-4;
+    }
+
+    .map-container {
+      @apply mx-0;
+    }
   }
 
-  .map-loading {
-    @apply flex items-center justify-center h-96 bg-gray-50;
-  }
+  @media (max-width: 640px) {
+    .main-content {
+      @apply p-4;
+    }
 
-  .map-loading-spinner {
-    @apply animate-spin rounded-full h-12 w-12 border-b-2;
-    border-color: var(--wine);
-  }
+    .section-title {
+      @apply text-xl;
+    }
 
-  /* Google Maps情報ウィンドウ用 */
-  .gm-style-iw {
-    font-family: var(--font-primary) !important;
-  }
+    .app-header {
+      @apply px-4;
+    }
 
-  .gm-style-iw-d {
-    overflow: visible !important;
-  }
+    .header-title {
+      @apply text-base;
+    }
 
-  /* マップマーカーホバー効果 */
-  .map-marker-hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
-  }
-}
+    .view-toggle {
+      @apply w-full;
+    }
 
-/* レスポンシブ */
-@media (max-width: 1023px) {
-  .main-layout {
-    @apply flex-col pt-16;
-  }
+    .view-toggle-button {
+      @apply flex-1 justify-center;
+    }
 
-  .app-sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    @apply top-0 p-4;
-  }
+    .controls-container {
+      @apply flex-col gap-2 w-full;
+    }
 
-  .section-header {
-    @apply flex-col gap-3 items-start mb-4;
-  }
-
-  .bar-grid {
-    @apply grid-cols-1 gap-4;
-  }
-
-  /* モバイル用マップ調整 */
-  .map-container {
-    @apply mx-0;
-  }
-}
-
-@media (max-width: 640px) {
-  .main-content {
-    @apply p-4;
-  }
-
-  .section-title {
-    @apply text-xl;
-  }
-
-  .app-header {
-    @apply px-4;
-  }
-
-  .header-title {
-    @apply text-base;
-  }
-
-  /* モバイル用ビュー切り替えボタン */
-  .view-toggle {
-    @apply w-full;
-  }
-
-  .view-toggle-button {
-    @apply flex-1 justify-center;
-  }
-
-  .controls-container {
-    @apply flex-col gap-2 w-full;
-  }
-
-  .sort-select {
-    @apply w-full;
+    .sort-select {
+      @apply w-full;
+    }
   }
 }

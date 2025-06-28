@@ -14,16 +14,10 @@ class BarsController < ApplicationController
     end
 
     @bars = apply_sorting(@bars)
-
     @bars = @bars.distinct
 
-    if helpers.search_performed?
-      @bars = @bars.page(params[:page]).per(20)
-    else
-      @bars = @bars.limit(12)
-    end
-
     @total_count = @bars.count
+    @bars = @bars.page(params[:page]).per(20)
 
     # Google Maps用データを別途取得
     map_query_base = Bar.where.not(latitude: nil, longitude: nil)
