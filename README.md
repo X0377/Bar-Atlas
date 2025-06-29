@@ -9,16 +9,34 @@
 ## 📱 アプリケーション画面
 
 ### PC 表示
+- TOPページ
+<img width="1000" alt="スクリーンショット 2025-06-29 10 29 47" src="https://github.com/user-attachments/assets/ad9477c6-7440-41da-8b58-cecae4ae4aba" />
+<br>
+<br>
+- 地図ビュー
+<img width="1000" alt="スクリーンショット 2025-06-29 10 30 41" src="https://github.com/user-attachments/assets/77302e49-5513-4640-b393-bbe66f39bcef" />
+<br>
+<br>
 
-[PC 画面のスクリーンショットを追加]
+- 絞り込み時
+<img width="1000" alt="スクリーンショット 2025-06-29 10 33 14" src="https://github.com/user-attachments/assets/89db4c00-3882-401c-ba44-a06925d86763" />
+<br>
+<br>
 
-### モバイル表示
+- ソート
+<img width="326" alt="スクリーンショット 2025-06-29 10 31 56" src="https://github.com/user-attachments/assets/2d113b44-5e47-4077-aa3e-5b111fde1628" />
+<br>
+<br>
 
-[スマホ画面のスクリーンショットを追加]
+- バー詳細ページ
+<img width="1815" alt="スクリーンショット 2025-06-29 10 35 06" src="https://github.com/user-attachments/assets/19ef5748-5670-4905-a7d3-4ccbad7da4c5" />
+<br>
+<br>
 
-### 操作デモ
+- モバイル表示
+<img width="430" alt="スクリーンショット 2025-06-29 10 33 59" src="https://github.com/user-attachments/assets/6e6e3d94-0b0c-432f-90f1-ab72a715084d" />
+<br>
 
-[検索操作の GIF 動画を追加]
 
 ---
 
@@ -133,7 +151,6 @@ Bar-Atlas は、これらの課題を解決する**検索特化型プラット�
 - **CI/CD パイプライン（GitHub Actions）**: 開発効率の最大化
 
 ---
-
 ## 🔧 ローカル実行手順
 
 ```bash
@@ -151,10 +168,15 @@ $ rails db:migrate
 # 初期データの投入
 $ rails db:seed
 
-# 開発サーバーの起動
-$ rails s
+# 開発サーバーの起動（TailwindCSS監視込み）
+$ bin/dev
 ```
 
+### 📝 開発時の注意点
+
+- **`bin/dev` を使用**: TailwindCSSの変更を監視・自動リビルドするため
+- **Google Maps API キー**: 地図機能を使用する場合は環境変数の設定が必要
+- **座標データ**: 本番環境では `rails geocoding:update_coordinates` で実座標を取得
 ---
 
 **「良いバーと出会う」という体験を、技術で最大化する。そんな想いを込めたプラットフォームです。**
