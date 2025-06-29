@@ -1,0 +1,170 @@
+<%= search_form_for @q, url: bars_path, method: :get, local: true, html: { id: 'unified-search-form' } do |f| %>
+  <div class="mb-8">
+    <%= f.text_field :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont,
+        placeholder: "キーワードでバーを検索...",
+        class: "search-input",
+        value: params.dig(:q, :name_or_address_or_phone_or_smoking_status_or_description_or_specialties_category_cont) %>
+  </div>
+  <!-- レスポンシブ表示未実装のため暫定的に非表示対応 -->
+  <div class="hidden lg:block">
+    <!-- エリアフィルター -->
+    <div class="mb-6">
+      <div class="sidebar-section-title">エリア</div>
+      <div class="mb-3">
+        <%= f.text_field :address_cont,
+          placeholder: "エリアを入力...",
+          class: "search-input",
+          value: params.dig(:q, :address_cont) %>
+      </div>
+      <div class="filter-options-container">
+        <% %w[新宿 六本木 恵比寿 渋谷 銀座].each do |area| %>
+          <div class="filter-option <%= 'active' if params.dig(:q, :address_cont) == area %>"
+             onclick="setFilterValue('address_cont', '<%= area %>')">
+            <span class="filter-option-label"><%= area %></span>
+          </div>
+        <% end %>
+        <% if params.dig(:q, :address_cont).present? %>
+          <div class="filter-option" onclick="clearFilterValue('address_cont')">
+            <span class="filter-option-label">すべて表示</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <!-- スペシャリティフィルター -->
+    <div class="mb-6">
+      <div class="sidebar-section-title">得意分野</div>
+      <div class="filter-options-container">
+        <% [
+        { value: 'ウイスキー', emoji: '🥃', label: 'ウイスキー' },
+        { value: 'カクテル', emoji: '🍸', label: 'カクテル' },
+        { value: 'ワイン', emoji: '🍷', label: 'ワイン' },
+        { value: 'ビール', emoji: '🍺', label: 'ビール' },
+        { value: '日本酒', emoji: '🍶', label: '日本酒' },
+        { value: '焼酎', emoji: '🥃', label: '焼酎' },
+        { value: 'シャンパン', emoji: '🥂', label: 'シャンパン' }
+      ].each do |specialty| %>
+          <div class="filter-option specialty-filter-option <%= 'active' if params.dig(:q, :specialties_category_eq) == specialty[:value] %>"
+             onclick="setFilterValue('specialties_category_eq', '<%= specialty[:value] %>')">
+            <span class="text-lg"><%= specialty[:emoji] %></span>
+            <span class="filter-option-label"><%= specialty[:label] %></span>
+          </div>
+        <% end %>
+        <% if params.dig(:q, :specialties_category_eq).present? %>
+          <div class="filter-option" onclick="clearFilterValue('specialties_category_eq')">
+            <span class="filter-option-label">すべて表示</span>
+          </div>
+        <% end %>
+      </div>
+      <%= f.hidden_field :specialties_category_eq, value: params.dig(:q, :specialties_category_eq) %>
+    </div>
+    <!-- 価格帯フィルター（ホバーヘルプ付き） -->
+    <div class="mb-6">
+      <div class="sidebar-section-title">価格帯</div>
+      <div class="filter-options-container">
+        <% [
+        {
+          value: 'reasonable',
+          label: 'リーズナブル',
+          description: '下限〜¥4,000 または 上限〜¥4,500',
+          emoji: '💰'
+        },
+        {
+          value: 'standard',
+          label: '標準',
+          description: '¥4,000〜¥8,000程度の価格帯',
+          emoji: '💳'
+        },
+        {
+          value: 'luxury',
+          label: '高級',
+          description: '下限¥8,000〜 または 上限¥10,000〜',
+          emoji: '💎'
+        }
+      ].each do |option| %>
+          <div class="filter-option price-filter-option <%= 'active' if params.dig(:q, :price_category_eq) == option[:value] %>"
+             onclick="setFilterValue('price_category_eq', '<%= option[:value] %>')"
+             data-tooltip="<%= option[:description] %>">
+            <span class="text-lg"><%= option[:emoji] %></span>
+            <div class="flex-1">
+              <span class="filter-option-label"><%= option[:label] %></span>
+              <div class="text-xs text-gray-500 hidden-details">
+                <%= option[:description] %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+        <% if params.dig(:q, :price_category_eq).present? %>
+          <div class="filter-option" onclick="clearFilterValue('price_category_eq')">
+            <span class="filter-option-label">すべて表示</span>
+          </div>
+        <% end %>
+      </div>
+      <%= f.hidden_field :price_category_eq, value: params.dig(:q, :price_category_eq) %>
+    </div>
+    <!-- 喫煙状況フィルター -->
+    <div class="mb-6">
+      <div class="sidebar-section-title">喫煙状況</div>
+      <div class="filter-options-container">
+        <% [
+        { value: '禁煙', emoji: '🚭', label: '禁煙' },
+        { value: '分煙', emoji: '🚫', label: '分煙' },
+        { value: '喫煙可', emoji: '🚬', label: '喫煙可' },
+        { value: '屋外喫煙可', emoji: '🌬️', label: '屋外喫煙可' }
+      ].each do |option| %>
+          <div class="filter-option <%= 'active' if params.dig(:q, :smoking_status_eq) == option[:value] %>"
+             onclick="setFilterValue('smoking_status_eq', '<%= option[:value] %>')">
+            <span class="text-lg"><%= option[:emoji] %></span>
+            <span class="filter-option-label"><%= option[:label] %></span>
+          </div>
+        <% end %>
+        <% if params.dig(:q, :smoking_status_eq).present? %>
+          <div class="filter-option" onclick="clearFilterValue('smoking_status_eq')">
+            <span class="filter-option-label">すべて表示</span>
+          </div>
+        <% end %>
+      </div>
+      <%= f.hidden_field :smoking_status_eq, value: params.dig(:q, :smoking_status_eq) %>
+    </div>
+    <% if search_performed? %>
+      <div class="mb-6">
+        <div class="filter-option" onclick="clearAllFiltersUnified()" style="justify-content: center; background-color: var(--wine); color: white;">
+          <span class="filter-option-label">すべての条件をクリア</span>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+  <!-- モバイル用ツールチップJavaScript簡易実装中 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      if (window.innerWidth <= 768) {
+        document.querySelectorAll('[data-tooltip]').forEach(element => {
+          element.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            // 既存のtooltipを削除
+            document.querySelectorAll('.tooltip-active').forEach(el => {
+              el.classList.remove('tooltip-active');
+            });
+
+            // 新しいtooltipを表示
+            this.classList.add('tooltip-active');
+
+            // 3秒後に自動で削除
+            setTimeout(() => {
+              this.classList.remove('tooltip-active');
+            }, 3000);
+          });
+        });
+
+        // 背景タップでtooltipを閉じる
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('[data-tooltip]')) {
+            document.querySelectorAll('.tooltip-active').forEach(el => {
+              el.classList.remove('tooltip-active');
+            });
+          }
+        });
+      }
+    });
+  </script>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>酔いの地図帳</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="bg-gray-100" data-rails-env="<%= Rails.env %>">
+    <header class="app-header">
+      <div class="flex items-center gap-6">
+        <%= link_to "酔いの地図帳", root_path, class: "header-title" %>
+      </div>
+      <div class="flex items-center gap-4">
+      </div>
+    </header>
+    <div class="main-layout">
+      <% if controller_name == 'bars' && action_name == 'index' %>
+        <aside class="app-sidebar">
+          <%= render 'shared/search_sidebar' %>
+        </aside>
+      <% end %>
+      <main class="<%= controller_name == 'bars' && action_name == 'index' ? 'main-content' : 'flex-1 p-6' %>">
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>
