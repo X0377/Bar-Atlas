@@ -1,86 +1,160 @@
-# 🍸 Bar‑Atlas 「酔いの地図帳」
+# 🍸 Bar-Atlas（酔いの地図帳）
 
-## 🔍 Overview
+> 本格的なバーを洗練された UI と強力な検索機能で発見できる、バー検索特化型プラットフォーム
 
-**Bar‑Atlas** is a Ruby on Rails application that helps you discover authentic cocktail & whisky bars. The current release (**MVP v0.1**) focuses on publishing bar information so it can be reviewed and iterated quickly; richer search and map features will follow.
-
----
-
-## 🚀 Features
-
-### 📝 **Implemented Features (v0.1)**
-
-- 🏷 **Bar Management**
-
-  - CRUD operations for bars (name, address, price range, smoking status, description)
-  - Each bar can list multiple **specialties** (main liquor categories)
-
-- 🗂 **Seed Data**
-
-  - 10 sample bars & specialties shipped for instant demo
-
-### 🛠 **Planned Features**
-
-The MVP is intentionally small. After the initial review cycle we plan to iterate and add:
-
-- 🔍 Advanced search (keyword, area, filters)
-- 👤 User authentication & profiles
-- ⭐ Favorite bars
-- 🗺 Google Maps integration
-- 📱 Responsive UI polish
-- 💬 Basic reviews / comments
-
-| Version  | Features                                                                                      |
-| -------- | --------------------------------------------------------------------------------------------- |
-| **v0.2** | 🔍 Keyword & area search (Ransack)<br>🎨 Tailwind UI card polish                              |
-| **v0.3** | 👤 User authentication (Devise)<br>⭐ Favorite bars                                           |
-| **v0.4** | 🗺 Google Maps marker display<br>⚡ N+1 query optimisation                                     |
-| **v1.0** | 📱 Responsive design fine‑tune<br>🔄 CI/CD auto‑deploy to Render<br>💬 Simple review/comments |
+**アプリケーション URL**: https://yoino-chizucho.onrender.com/
 
 ---
 
-## 📸 Screenshots _(WIP placeholders)_
+## 📱 アプリケーション画面
 
-| Description | Screenshot      |
-| ----------- | --------------- |
-| Bar List    | _(coming soon)_ |
-| Bar Detail  | _(coming soon)_ |
+### PC 表示
 
-> Final screenshots will be added after UI polish (v0.2).
+[PC 画面のスクリーンショットを追加]
 
----
+### モバイル表示
 
-## 🛠 Technologies Used
+[スマホ画面のスクリーンショットを追加]
 
-- **Ruby 3.3.3**
-- **Rails 7.1.5.1**
-- **PostgreSQL 14** (dev) / **Render PostgreSQL Free** (prod)
-- **Tailwind CSS 3** + Heroicons
-- **RSpec** (test) / **GitHub Actions** (CI)
+### 操作デモ
+
+[検索操作の GIF 動画を追加]
 
 ---
 
-## 🔧 Setup
+## 💡 開発背景・コンセプト
+
+### 🍻 バー愛好家としての体験から生まれたアプリ
+
+このプロジェクトは、**東京都内 40 店舗以上のバーを巡った経験**から生まれました。「本当にお酒が好きな人が、その日の気分に合った最高のバーと出会える地図を作りたい」。その想いから、企画・設計・開発・デプロイまで全工程を一人で完遂しました。
+
+### 既存サービスとの差別化
+
+既存のバー検索サービスを調査した結果、以下の課題を発見：
+
+- **検索の柔軟性不足**: 「雰囲気」「得意分野」での直感的な検索が困難
+- **モバイル体験**: スマートフォンでの操作性に改善の余地
+- **情報の統合性**: 地図・詳細情報・個人記録が分散
+
+Bar-Atlas は、これらの課題を解決する**検索特化型プラットフォーム**として設計しました。
+
+### なぜリアルなデータにこだわるのか
+
+- **マスターとの対話**: 「本当の得意分野」は実際に話してみないと分からない
+- **実体験による情報**: 座席の居心地、時間帯による雰囲気の変化
+- **継続的な探求**: 新しいバーとの出会いを常に求めている
+
+**現状**: 技術検証のためサンプルデータ 60 件で機能実装を優先
+**将来**: 実地調査による高品質データへの差し替え・拡充
+
+---
+
+## 🎯 設計思想：なぜ CRUD 機能を実装しないのか
+
+このアプリは、ユーザーがコンテンツを投稿・編集する CGM（Consumer Generated Media）ではなく、**信頼できるバーの情報を、最高の探しやすさで提供する「検索特化型プラットフォーム」**として設計しました。
+
+**SUUMO のバー版**をイメージしています。ユーザーは「バーを登録する」のではなく、「厳選されたデータの中から、運命の一軒を探し出す」ことに集中します。
+
+### MVP としての判断理由
+
+- 🎯 **コア価値の追求**: ユーザーにとっての最大価値は「良いバーと出会えること」
+- 📊 **情報品質の担保**: 管理者による厳選で信頼性を維持
+- ⚡ **開発リソースの集中**: 検索体験と UI/UX の磨き込みを優先
+
+---
+
+## ⚡ 実装機能
+
+### 🔍 高度な検索機能（Ransack）
+
+- **複合条件検索**: キーワード・エリア・価格帯・得意分野・喫煙状況を組み合わせ
+- **横断検索**: 店名・住所・得意分野を横断したキーワード検索
+- **価格帯の抽象化**: ransacker により「高級」「リーズナブル」での感覚的検索を実現
+
+### 🗺️ 地図連携（Google Maps API + StimulusJS）
+
+- **リアルタイム表示**: 検索結果を地図上のマーカーに即座に反映
+- **カスタム情報ウィンドウ**: アプリデザインと統一されたリッチな UI
+- **状態の永続化**: ビュー切り替え状態を localStorage で保持
+
+### 🎨 洗練された UI/UX
+
+- **デザインシステム**: ダークネイビー・ワインレッドを基調とした統一感
+- **レスポンシブ対応**: Tailwind CSS による全デバイス最適化
+- **コンポーネント設計**: 再利用可能なバーカードパーシャル
+
+---
+
+## 🛠 技術スタック・工夫点
+
+### 技術構成
+
+- **バックエンド**: Ruby 3.3.3, Rails 7.1.5.1
+- **フロントエンド**: HTML/CSS/JavaScript, Tailwind CSS, StimulusJS
+- **データベース**: PostgreSQL
+- **外部 API**: Google Maps API
+- **主要 Gem**: Ransack, Bullet, Kaminari
+
+### パフォーマンス・品質への配慮
+
+- **N+1 問題対策**: Bullet gem + includes による Eager Loading
+- **データベース設計**: 正規化された bars・specialties テーブル
+- **豊富な検証データ**: 60 店舗のサンプルデータで動作検証
+
+---
+
+## 🗓 開発プロセス・思考の軌跡
+
+本プロジェクトは、事前に作成した計画書に基づき段階的に開発しました：
+
+- 📋 **[詳細開発計画書](./docs/development_plan.md)** - 要件定義からリスク管理まで網羅
+- 🎯 **[開発ロードマップ](./docs/roadmap.md)** - レビュー提出から逆算した具体的なマイルストーン
+
+これらのドキュメントは、私の**思考プロセス**と**問題解決へのアプローチ**を示すものでもあります。
+
+---
+
+## 🚀 今後の展望
+
+### Phase 1: パーソナライゼーション
+
+- **ユーザー認証（Devise）**: お気に入り機能の基盤構築
+- **訪問記録機能**: 個人のバー体験を蓄積
+
+### Phase 2: リアルデータ移行
+
+- **実地調査データの整理**: 訪問済み 40 店舗の情報まとめ
+- **写真撮影・整理**: オリジナル画像での差し替え
+- **マスター取材**: 得意分野・おすすめの詳細ヒアリング
+
+### Phase 3: 体験の向上
+
+- **テストカバレッジ向上（RSpec）**: System Spec の拡充
+- **CI/CD パイプライン（GitHub Actions）**: 開発効率の最大化
+
+---
+
+## 🔧 ローカル実行手順
 
 ```bash
-# clone
-$ git clone git@github.com:X0377/Bar-Atlas.git
+# リポジトリをクローンしてディレクトリを移動
+$ git clone https://github.com/X0377/Bar-Atlas.git
 $ cd Bar-Atlas
 
-# dependencies
-$ brew services start postgresql@14   # or any running Postgres ≥14
+# 必要なGemをインストール
 $ bundle install
 
-# database
-$ bin/rails db:prepare   # create + migrate
-$ bin/rails db:seed      # load sample bars
+# データベースの作成とマイグレーション
+$ rails db:create
+$ rails db:migrate
 
-# run
-$ bin/rails s            # http://localhost:3000
+# 初期データの投入
+$ rails db:seed
+
+# 開発サーバーの起動
+$ rails s
 ```
 
 ---
 
-## 🎠 License
-
-This project is licensed under the [MIT](LICENSE).
+**「良いバーと出会う」という体験を、技術で最大化する。そんな想いを込めたプラットフォームです。**
